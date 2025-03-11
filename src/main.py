@@ -34,11 +34,17 @@ def create_object_dice(die_face):
         for i, section in enumerate(line.split(',')):
             faces[i].append(section)
     return faces[die_face - 1]
+
+  
+def print_five_dice(result):
+    faces = [create_object_dice(die) for die in result]
+    for i in range(len(faces)):
+        for j in range(len(faces[0])):
+            print(faces[j][i], end=' ')
+        if i != len(faces) - 1:
+            print()
+
     
-# face = create_object_dice(DICE_DATA, number)
-    
-def print_dice(face):
-    print("\n".join(face))
 
 def roll_five_dice() -> list[int]:
     results = []
@@ -57,18 +63,15 @@ def one_turn():
     print("Rolling five dice...")
     result = roll_five_dice()
     print(f"Result: {result}")
-    for die in result:
-        face = create_object_dice(die)
-        print_dice(face)
+    print_five_dice(result)
     for i in range(2):
         print(f"{i + 1}: Rerolling...")
         try:
             reroll_dices = list(map(int, input().split(" ")))
+            validate_array(reroll_dices)
             reroll_few_dice(result, reroll_dices)
             print(f"Updated result: {result}")
-            for die in result:
-                face = create_object_dice(die)
-                print_dice(face)
+            print_five_dice(result) 
         except ArraySizeError as e:
             print(f"Size Error: {e}")
         except NumberRangeError as e:
@@ -79,9 +82,10 @@ def one_turn():
             print(f"Unexpected Error: {e}")
 
 def main():
-    one_turn()
-    # print("Rolling five dice...")
-    # results = roll_five_dice()
+    # one_turn()
+    result = roll_five_dice()
+    print(f"Result: {result}")
+    print_five_dice(result)
     # print(f"Results: {results}")
     # for die in results:
     #     face = create_object_dice(die)
