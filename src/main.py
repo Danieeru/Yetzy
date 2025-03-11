@@ -66,6 +66,20 @@ def one_turn():
             reroll_dices = list(map(int, input().split(" ")))
             reroll_few_dice(result, reroll_dices)
             print(f"Updated result: {result}")
+            for die in result:
+                face = create_object_dice(die)
+                print_dice(face)
+        except ArraySizeError as e:
+            print(f"Size Error: {e}")
+        except NumberRangeError as e:
+            print(f"Range Error: {e}")
+        except DuplicateNumberError as e:
+            print(f"Uniqueness Error: {e}")
+        except Exception as e:
+            print(f"Unexpected Error: {e}")
+
+def main():
+    one_turn()
     # print("Rolling five dice...")
     # results = roll_five_dice()
     # print(f"Results: {results}")
