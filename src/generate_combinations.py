@@ -180,9 +180,10 @@ def full_house_generate(dice):
             for num, count in counts.items():
                 if count == 2 or count == 3:
                     sum_fh += num * count
-            if sum_fh not in fh_dict:
-                fh_dict[sum_fh] = []
-            fh_dict[sum_fh].append(dice[i])
+            if sum_fh != 0:
+                if sum_fh not in fh_dict:
+                    fh_dict[sum_fh] = []
+                fh_dict[sum_fh].append(dice[i])
     return dict(sorted(fh_dict.items()))
 
         
@@ -219,7 +220,7 @@ def main():
     four_of_a_kind_dict = four_of_a_kind_generate(dice)
     full_house_dict = full_house_generate(dice)
     for i in full_house_dict:
-        print(f"Full House: {i}, Count: {full_house_dict[i]}")
+        print(f"Full House: {i}, Count: {len(full_house_dict[i])}")
         print("=========================")
     # small_straight_dict = small_straight_generate(dice)
     # large_straight_dict = large_straight_generate(dice)
