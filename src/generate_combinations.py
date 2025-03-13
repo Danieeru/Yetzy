@@ -2,6 +2,7 @@ import random
 import itertools
 import json
 
+# Можно использовать Counter из collections для подсчета уникальных символов в массиве
 
 def generate_full_houses_2():
     dic_fh = {}
@@ -167,6 +168,7 @@ def four_of_a_kind_generate(dice):
 
 
 def full_house_generate(dice):
+    # нету нормальной обрабоки случая 4 + 1
     fh_dict = {}
     for i in range(len(dice)):
         counts = {}
@@ -175,7 +177,7 @@ def full_house_generate(dice):
                 counts[num] = 1
             else:
                 counts[num] += 1
-        if len(counts) == 2:
+        if len(counts) == 2: # сюда заходят комбинации 4 + 1, нужен апргейд
             sum_fh = 0
             for num, count in counts.items():
                 if count == 2 or count == 3:
@@ -192,7 +194,21 @@ def small_straight_generate(dice):
 def large_straight_generate(dice):
     pass
 def yezzi_generate(dice):
-    pass
+    yezzi_dic = {}
+    for i in range(len(dice)):
+        counts = {}
+        for num in dice[i]:
+            if num not in counts:
+                counts[num] = 1
+            else:
+                counts[num] += 1
+        for num, count in counts.items():
+            if count == 5:
+                sum_yezzi = num *5
+                if sum_yezzi not in yezzi_dic:
+                    yezzi_dic[sum_yezzi] = []
+                yezzi_dic[sum_yezzi].append(dice[i])
+    return dict(sorted(yezzi_dic.items()))
 
 def chance_generate():
     dic_chance = {}
@@ -219,12 +235,13 @@ def main():
     three_of_a_kind_dict = three_of_a_kind_generate(dice)
     four_of_a_kind_dict = four_of_a_kind_generate(dice)
     full_house_dict = full_house_generate(dice)
-    for i in full_house_dict:
-        print(f"Full House: {i}, Count: {len(full_house_dict[i])}")
-        print("=========================")
     # small_straight_dict = small_straight_generate(dice)
     # large_straight_dict = large_straight_generate(dice)
-    # yezzi_dict = yezzi_generate(dice)
+    yezzi_dict = yezzi_generate(dice)
+    for i in yezzi_dict:
+        print(f"Full House: {i}, Count: {len(yezzi_dict[i])}")
+        print("=========================")
+
     # chance_dict = chance_generate(dice)
     # for i in one_dict:
     #     print(f"One: {i}, Count: {one_dict[i]}")
