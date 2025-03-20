@@ -212,7 +212,33 @@ def small_straight_generate(dice):
 
 
 def large_straight_generate(dice):
-    pass
+    b_street = {}
+    for arr in dice:
+        temp_arr = arr.copy()
+        temp_arr.sort()
+        found = False  
+        n = len(temp_arr)
+        for i in range(n - 4):
+            subarray = temp_arr[i:i+5]
+            valid = True
+            for j in range(4):
+                if subarray[j + 1] != subarray[j] + 1:
+                    valid = False
+                    break
+            if valid:
+                total = sum(subarray)
+                if total not in b_street:
+                    b_street[total] = []
+                b_street[total].append(arr)
+                found = True
+        if not found:
+            total = 0
+            if total not in b_street:
+                b_street[total] = []
+            b_street[total].append(arr)
+    return dict(sorted(b_street.items()))
+
+
 def yezzi_generate(dice):
     yezzi_dic = {}
     for arr in dice:
@@ -230,6 +256,7 @@ def yezzi_generate(dice):
                 yezzi_dic[sum_yezzi].append(arr)
     return dict(sorted(yezzi_dic.items()))
 
+
 def chance_generate(dice):
     dic_chance = {}
     for arr in dice:
@@ -239,6 +266,7 @@ def chance_generate(dice):
         dic_chance[s_1].append(arr)
     return dict(sorted(dic_chance.items()))
 
+
 def testing_count(combination_dict):
     s = 0
     for i in combination_dict:
@@ -246,11 +274,11 @@ def testing_count(combination_dict):
         s += len(combination_dict[i])
     print(f"s = {s}")
 
+
 def testing_arrs(combination_dict):
     s = 0
     for i in combination_dict:
         print(f"Score: {i}, Arr: {combination_dict[i]}")
-
 
 
 def main():
@@ -268,7 +296,7 @@ def main():
     four_of_a_kind_dict = four_of_a_kind_generate(dice)
     full_house_dict = full_house_generate(dice)
     small_straight_dict = small_straight_generate(dice)
-    # large_straight_dict = large_straight_generate(dice)
+    large_straight_dict = large_straight_generate(dice)
     yezzi_dict = yezzi_generate(dice)
     chance_dict = chance_generate(dice)
 
@@ -302,8 +330,9 @@ def main():
     # print('testing_count "small straight":')
     # testing_count(small_straight_dict)
     # testing_arrs(small_straight_dict)
-    # print('testing_count "large straight":')
-    # testing_count()
+    print('testing_count "large straight":')
+    testing_count(large_straight_dict)
+    testing_arrs(large_straight_dict)
     # print('testing_count "yezzi":')
     # testing_count(yezzi_dict)
     # print('testing_count "chance":')
