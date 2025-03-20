@@ -4,39 +4,6 @@ import json
 
 # Можно использовать Counter из collections для подсчета уникальных символов в массиве
 
-def generate_full_houses_2():
-    dic_fh = {}
-    dice = list(itertools.combinations([1, 2, 3, 4, 5, 6], 2))
-    for i in range(len(dice)):
-        temp_1 = [dice[i][0] for j in range(3)]
-        temp_1.extend([dice[i][1] for j in range(2)])
-        temp_2 = [dice[i][0] for j in range(2)]
-        temp_2.extend(dice[i][1] for j in range(3))
-        s_1 = sum(temp_1)
-        s_2 = sum(temp_2)
-        if s_1 not in dic_fh:
-            dic_fh[s_1] = []
-        dic_fh[s_1].append(temp_1)
-        if s_2 not in dic_fh:
-            dic_fh[s_2] = []
-        dic_fh[s_2].append(temp_2)
-    return dict(sorted(dic_fh.items()))
-    
-
-def generate_two_pairs():
-    dic_tp = {}
-    dice = list(itertools.combinations([1, 2, 3, 4, 5, 6], 2))
-    for i in range(len(dice)):
-        temp_1 = [dice[i][0] for j in range(2)]
-        temp_1.extend([dice[i][1] for j in range(2)])
-        s_1 = sum(temp_1)
-        if s_1 not in dic_tp:
-            dic_tp[s_1] = []
-        dic_tp[s_1].append(temp_1)
-    return dict(sorted(dic_tp.items()))
-
-
-
 def generate_dice():
     dice = list(itertools.product("123456", repeat=5))
     for i in range(len(dice)):
@@ -108,8 +75,6 @@ def one_pair_generate(dice):
                     one_pair_dict[sum_pair] = []
                 one_pair_dict[sum_pair].append(dice[i])
     return dict(sorted(one_pair_dict.items()))
-
-
 def two_pair_generate(dice):
     two_pair_dict = {}
     for i in range(len(dice)):
@@ -130,7 +95,6 @@ def two_pair_generate(dice):
                 two_pair_dict[sum_pair].append(dice[i])
                 temp = -1
     return dict(sorted(two_pair_dict.items()))
-
 def three_of_a_kind_generate(dice):
     toak_dic = {}
     for i in range(len(dice)):
@@ -146,9 +110,7 @@ def three_of_a_kind_generate(dice):
                 if sum_toak not in toak_dic:
                     toak_dic[sum_toak] = []
                 toak_dic[sum_toak].append(dice[i])
-    return dict(sorted(toak_dic.items()))
-
-            
+    return dict(sorted(toak_dic.items()))           
 def four_of_a_kind_generate(dice):
     foak_dic = {}
     for i in range(len(dice)):
@@ -165,8 +127,6 @@ def four_of_a_kind_generate(dice):
                     foak_dic[sum_foak] = []
                 foak_dic[sum_foak].append(dice[i])
     return dict(sorted(foak_dic.items()))
-
-
 def full_house_generate(dice):
     # нету нормальной обрабоки случая 4 + 1
     fh_dict = {}
@@ -186,11 +146,40 @@ def full_house_generate(dice):
                 if sum_fh not in fh_dict:
                     fh_dict[sum_fh] = []
                 fh_dict[sum_fh].append(dice[i])
-    return dict(sorted(fh_dict.items()))
+    return dict(sorted(fh_dict.items()))      
 
-        
 def small_straight_generate(dice):
-    pass
+    s_street_dict = {}
+    for arr in dice:
+        temp_arr = arr.copy()
+        temp_arr.sort()
+        found = False
+        n = len(temp_arr)
+        for i in range(n - 3):
+            subarray = temp_arr[i:i+4]
+            valid = True
+            for j in range(3):
+                if subarray[j + 1] != subarray[j] + 1:
+                    valid = False
+                    break
+            if valid:
+                total = sum(subarray)
+                if total not in s_street_dict:
+                    s_street_dict[total] = []
+                s_street_dict[total].append(arr)
+                found = True
+        if not found:
+            total = 0
+            if total not in s_street_dict:
+                s_street_dict[total] = []
+            s_street_dict[total].append(arr)
+    return dict(sorted(s_street_dict.items()))  
+
+# def small_straight_generate(dice):
+#     s_street_dict = {}
+#     for arr in dice:
+
+
 def large_straight_generate(dice):
     pass
 def yezzi_generate(dice):
@@ -210,9 +199,8 @@ def yezzi_generate(dice):
                 yezzi_dic[sum_yezzi].append(dice[i])
     return dict(sorted(yezzi_dic.items()))
 
-def chance_generate():
+def chance_generate(dice):
     dic_chance = {}
-    dice = list(itertools.combinations_with_replacement([1, 2, 3, 4, 5, 6], 5))
     for i in range(len(dice)):
         s_1 = sum(dice[i])
         if s_1 not in dic_chance:
@@ -220,8 +208,33 @@ def chance_generate():
         dic_chance[s_1].append(dice[i])
     return dict(sorted(dic_chance.items()))
 
+def testing_count(combination_dict):
+    s = 0
+    for i in combination_dict:
+        print(f"Score: {i}, Count: {len(combination_dict[i])}")
+        s += len(combination_dict[i])
+    print(f"s = {s}")
+
+def testing_arrs(combination_dict):
+    s = 0
+    for i in combination_dict:
+        print(f"Score: {i}, Arr: {combination_dict[i]}")
+
+
 
 def main():
+    dices = [
+        [1, 2, 3, 4, 6],
+        [2, 2, 3, 4, 5],
+        [3, 3, 4, 5, 6],
+        [1, 2, 3, 4, 5],
+        [2, 3, 4, 5, 6],
+        [1, 1, 1, 1, 1]
+    ]
+    # dices = [
+    #     [1, 2, 3, 4, 5],
+    #     [2, 3, 4, 5, 6]
+    # ]
     dice = generate_dice()
     print(len(dice))
     one_dict = one_generate(dice)
@@ -235,12 +248,45 @@ def main():
     three_of_a_kind_dict = three_of_a_kind_generate(dice)
     four_of_a_kind_dict = four_of_a_kind_generate(dice)
     full_house_dict = full_house_generate(dice)
-    # small_straight_dict = small_straight_generate(dice)
+    small_straight_dict = small_straight_generate(dice)
     # large_straight_dict = large_straight_generate(dice)
+
     yezzi_dict = yezzi_generate(dice)
-    for i in yezzi_dict:
-        print(f"Full House: {i}, Count: {len(yezzi_dict[i])}")
-        print("=========================")
+    chance_dict = chance_generate(dice)
+    print("Test result")
+    print('testing__count "one":')
+    testing_count(one_dict)
+    print('testing_count "two":')
+    testing_count(two_dict)
+    print('testing_count "three":')
+    testing_count(three_dict)
+    print('testing_count "four":')
+    testing_count(four_dict)
+    print('testing_count "five":')
+    testing_count(five_dict)
+    print('testing_count "six":')
+    testing_count(six_dict)
+    print('testing_count "one pair":')
+    testing_count(one_pair_dict)
+    print('testing_count "two pair":')
+    testing_count(two_pair_dict)
+    print('testing_count "three of a kind":')
+    testing_count(three_of_a_kind_dict)
+    print('testing_count "four of a kind":')
+    testing_count(four_of_a_kind_dict)
+    print('testing_count "full house":')
+    testing_count(full_house_dict)
+    print('testing_count "small straight":')
+    testing_count(small_straight_dict)
+    # testing_arrs(small_straight_dict)
+    print('testing_count "large straight":')
+    # testing_count()
+    # print('testing_count "yezzi":')
+    # testing_count(yezzi_dict)
+    # print('testing_count "chance":')
+    # testing_count(chance_dict)
+
+
 
     # chance_dict = chance_generate(dice)
     # for i in one_dict:
@@ -278,6 +324,7 @@ def main():
     # for i in three_of_a_kind_dict:
     #     print(f"{i}: {three_of_a_kind_dict[i]} ")
     # print("=========================")
+
 
 
 
