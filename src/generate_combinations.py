@@ -13,57 +13,57 @@ def generate_dice():
 def one_generate(dice):
     dice = generate_dice()
     one_dict = {}
-    for i in range(len(dice)):
-        s_1 = sum(x for x in dice[i] if x == 1)
+    for arr in dice:
+        s_1 = sum(x for x in arr if x == 1)
         if s_1 not in one_dict:
             one_dict[s_1] = []
-        one_dict[s_1].append(dice[i])
+        one_dict[s_1].append(arr)
     return dict(sorted(one_dict.items()))
 def two_generate(dice):
-    one_dict = {}
-    for i in range(len(dice)):
-        s_1 = sum(x for x in dice[i] if x == 2)
-        if s_1 not in one_dict:
-            one_dict[s_1] = []
-        one_dict[s_1].append(dice[i])
-    return dict(sorted(one_dict.items()))
+    two_dict = {}
+    for arr in dice:
+        s_1 = sum(x for x in arr if x == 2)
+        if s_1 not in two_dict:
+            two_dict[s_1] = []
+        two_dict[s_1].append(arr)
+    return dict(sorted(two_dict.items()))
 def three_generate(dice):
-    one_dict = {}
-    for i in range(len(dice)):
-        s_1 = sum(x for x in dice[i] if x == 3)
-        if s_1 not in one_dict:
-            one_dict[s_1] = []
-        one_dict[s_1].append(dice[i])
-    return dict(sorted(one_dict.items()))
+    three_dict = {}
+    for arr in dice:
+        s_1 = sum(x for x in arr if x == 3)
+        if s_1 not in three_dict:
+            three_dict[s_1] = []
+        three_dict[s_1].append(arr)
+    return dict(sorted(three_dict.items()))
 def four_generate(dice):
-    one_dict = {}
-    for i in range(len(dice)):
-        s_1 = sum(x for x in dice[i] if x == 4)
-        if s_1 not in one_dict:
-            one_dict[s_1] = []
-        one_dict[s_1].append(dice[i])
-    return dict(sorted(one_dict.items()))
+    four_dict = {}
+    for arr in dice:
+        s_1 = sum(x for x in arr if x == 4)
+        if s_1 not in four_dict:
+            four_dict[s_1] = []
+        four_dict[s_1].append(arr)
+    return dict(sorted(four_dict.items()))
 def five_generate(dice):
-    one_dict = {}
-    for i in range(len(dice)):
-        s_1 = sum(x for x in dice[i] if x == 5)
-        if s_1 not in one_dict:
-            one_dict[s_1] = []
-        one_dict[s_1].append(dice[i])
-    return dict(sorted(one_dict.items()))
+    five_dict = {}
+    for arr in dice:
+        s_1 = sum(x for x in arr if x == 5)
+        if s_1 not in five_dict:
+            five_dict[s_1] = []
+        five_dict[s_1].append(arr)
+    return dict(sorted(five_dict.items()))
 def six_generate(dice):
-    one_dict = {}
-    for i in range(len(dice)):
-        s_1 = sum(x for x in dice[i] if x == 6)
-        if s_1 not in one_dict:
-            one_dict[s_1] = []
-        one_dict[s_1].append(dice[i])
-    return dict(sorted(one_dict.items()))
+    six_dict = {}
+    for arr in dice:
+        s_1 = sum(x for x in arr if x == 6)
+        if s_1 not in six_dict:
+            six_dict[s_1] = []
+        six_dict[s_1].append(arr)
+    return dict(sorted(six_dict.items()))
 def one_pair_generate(dice):
     one_pair_dict = {}
-    for i in range(len(dice)):
+    for arr in dice:
         counts = {}
-        for num in dice[i]:
+        for num in arr:
             if num not in counts:
                 counts[num] = 1
             else:
@@ -73,13 +73,13 @@ def one_pair_generate(dice):
                 sum_pair = num * 2
                 if sum_pair not in one_pair_dict:
                     one_pair_dict[sum_pair] = []
-                one_pair_dict[sum_pair].append(dice[i])
+                one_pair_dict[sum_pair].append(arr)
     return dict(sorted(one_pair_dict.items()))
 def two_pair_generate(dice):
     two_pair_dict = {}
-    for i in range(len(dice)):
+    for arr in dice:
         counts = {}
-        for num in dice[i]:
+        for num in arr:
             if num not in counts:
                 counts[num] = 1
             else:
@@ -92,14 +92,14 @@ def two_pair_generate(dice):
                 sum_pair = temp * 2 + num * 2
                 if sum_pair not in two_pair_dict:
                     two_pair_dict[sum_pair] = []
-                two_pair_dict[sum_pair].append(dice[i])
+                two_pair_dict[sum_pair].append(arr)
                 temp = -1
     return dict(sorted(two_pair_dict.items()))
 def three_of_a_kind_generate(dice):
     toak_dic = {}
-    for i in range(len(dice)):
+    for arr in dice:
         counts = {}
-        for num in dice[i]:
+        for num in arr:
             if num not in counts:
                 counts[num] = 1
             else:
@@ -109,13 +109,13 @@ def three_of_a_kind_generate(dice):
                 sum_toak = num * 3
                 if sum_toak not in toak_dic:
                     toak_dic[sum_toak] = []
-                toak_dic[sum_toak].append(dice[i])
+                toak_dic[sum_toak].append(arr)
     return dict(sorted(toak_dic.items()))           
 def four_of_a_kind_generate(dice):
     foak_dic = {}
-    for i in range(len(dice)):
+    for arr in dice:
         counts = {}
-        for num in dice[i]:
+        for num in arr:
             if num not in counts:
                 counts[num] = 1
             else:
@@ -125,14 +125,14 @@ def four_of_a_kind_generate(dice):
                 sum_foak = num * 4
                 if sum_foak not in foak_dic:
                     foak_dic[sum_foak] = []
-                foak_dic[sum_foak].append(dice[i])
+                foak_dic[sum_foak].append(arr)
     return dict(sorted(foak_dic.items()))
 def full_house_generate(dice):
     # нету нормальной обрабоки случая 4 + 1
     fh_dict = {}
-    for i in range(len(dice)):
+    for arr in dice:
         counts = {}
-        for num in dice[i]:
+        for num in arr:
             if num not in counts:
                 counts[num] = 1
             else:
@@ -145,7 +145,7 @@ def full_house_generate(dice):
             if sum_fh != 0:
                 if sum_fh not in fh_dict:
                     fh_dict[sum_fh] = []
-                fh_dict[sum_fh].append(dice[i])
+                fh_dict[sum_fh].append(arr)
     return dict(sorted(fh_dict.items()))      
 
 def small_straight_generate(dice):
@@ -175,18 +175,14 @@ def small_straight_generate(dice):
             s_street_dict[total].append(arr)
     return dict(sorted(s_street_dict.items()))  
 
-# def small_straight_generate(dice):
-#     s_street_dict = {}
-#     for arr in dice:
-
 
 def large_straight_generate(dice):
     pass
 def yezzi_generate(dice):
     yezzi_dic = {}
-    for i in range(len(dice)):
+    for arr in dice:
         counts = {}
-        for num in dice[i]:
+        for num in arr:
             if num not in counts:
                 counts[num] = 1
             else:
@@ -196,16 +192,16 @@ def yezzi_generate(dice):
                 sum_yezzi = num *5
                 if sum_yezzi not in yezzi_dic:
                     yezzi_dic[sum_yezzi] = []
-                yezzi_dic[sum_yezzi].append(dice[i])
+                yezzi_dic[sum_yezzi].append(arr)
     return dict(sorted(yezzi_dic.items()))
 
 def chance_generate(dice):
     dic_chance = {}
-    for i in range(len(dice)):
-        s_1 = sum(dice[i])
+    for arr in dice:
+        s_1 = sum(arr)
         if s_1 not in dic_chance:
             dic_chance[s_1] = []
-        dic_chance[s_1].append(dice[i])
+        dic_chance[s_1].append(arr)
     return dict(sorted(dic_chance.items()))
 
 def testing_count(combination_dict):
@@ -223,18 +219,6 @@ def testing_arrs(combination_dict):
 
 
 def main():
-    dices = [
-        [1, 2, 3, 4, 6],
-        [2, 2, 3, 4, 5],
-        [3, 3, 4, 5, 6],
-        [1, 2, 3, 4, 5],
-        [2, 3, 4, 5, 6],
-        [1, 1, 1, 1, 1]
-    ]
-    # dices = [
-    #     [1, 2, 3, 4, 5],
-    #     [2, 3, 4, 5, 6]
-    # ]
     dice = generate_dice()
     print(len(dice))
     one_dict = one_generate(dice)
