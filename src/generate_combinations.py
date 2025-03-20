@@ -10,55 +10,90 @@ def generate_dice():
         dice[i] = [int(x) for x in dice[i]]
     return dice
 
+def wrire_to_dict(dict_num, s, arr):
+    if s not in dict_num:
+        dict_num[s] = []
+    dict_num[s].append(arr)
+
+
 def one_generate(dice):
-    dice = generate_dice()
-    one_dict = {}
+    num_dict = {}
+    num = 1
     for arr in dice:
-        s_1 = sum(x for x in arr if x == 1)
-        if s_1 not in one_dict:
-            one_dict[s_1] = []
-        one_dict[s_1].append(arr)
-    return dict(sorted(one_dict.items()))
+        count = arr.count(num)
+        for temp_count in range(6):
+            if count == temp_count == 0:
+                wrire_to_dict(num_dict, 0, arr)
+            if count >= temp_count != 0:
+                wrire_to_dict(num_dict, num * temp_count, arr)
+    return dict(sorted(num_dict.items()))
+
+
 def two_generate(dice):
-    two_dict = {}
+    num_dict = {}
+    num = 2
     for arr in dice:
-        s_1 = sum(x for x in arr if x == 2)
-        if s_1 not in two_dict:
-            two_dict[s_1] = []
-        two_dict[s_1].append(arr)
-    return dict(sorted(two_dict.items()))
+        count = arr.count(num)
+        for temp_count in range(6):
+            if count == temp_count == 0:
+                wrire_to_dict(num_dict, 0, arr)
+            if count >= temp_count != 0:
+                wrire_to_dict(num_dict, num * temp_count, arr)
+    return dict(sorted(num_dict.items()))
+
+
 def three_generate(dice):
-    three_dict = {}
+    num_dict = {}
+    num = 3
     for arr in dice:
-        s_1 = sum(x for x in arr if x == 3)
-        if s_1 not in three_dict:
-            three_dict[s_1] = []
-        three_dict[s_1].append(arr)
-    return dict(sorted(three_dict.items()))
+        count = arr.count(num)
+        for temp_count in range(6):
+            if count == temp_count == 0:
+                wrire_to_dict(num_dict, 0, arr)
+            if count >= temp_count != 0:
+                wrire_to_dict(num_dict, num * temp_count, arr)
+    return dict(sorted(num_dict.items()))
+
+
 def four_generate(dice):
-    four_dict = {}
+    num_dict = {}
+    num = 4
     for arr in dice:
-        s_1 = sum(x for x in arr if x == 4)
-        if s_1 not in four_dict:
-            four_dict[s_1] = []
-        four_dict[s_1].append(arr)
-    return dict(sorted(four_dict.items()))
+        count = arr.count(num)
+        for temp_count in range(6):
+            if count == temp_count == 0:
+                wrire_to_dict(num_dict, 0, arr)
+            if count >= temp_count != 0:
+                wrire_to_dict(num_dict, num * temp_count, arr)
+    return dict(sorted(num_dict.items()))
+
+
 def five_generate(dice):
-    five_dict = {}
+    num_dict = {}
+    num = 5
     for arr in dice:
-        s_1 = sum(x for x in arr if x == 5)
-        if s_1 not in five_dict:
-            five_dict[s_1] = []
-        five_dict[s_1].append(arr)
-    return dict(sorted(five_dict.items()))
+        count = arr.count(num)
+        for temp_count in range(6):
+            if count == temp_count == 0:
+                wrire_to_dict(num_dict, 0, arr)
+            if count >= temp_count != 0:
+                wrire_to_dict(num_dict, num * temp_count, arr)
+    return dict(sorted(num_dict.items()))
+
+
 def six_generate(dice):
-    six_dict = {}
+    num_dict = {}
+    num = 6
     for arr in dice:
-        s_1 = sum(x for x in arr if x == 6)
-        if s_1 not in six_dict:
-            six_dict[s_1] = []
-        six_dict[s_1].append(arr)
-    return dict(sorted(six_dict.items()))
+        count = arr.count(num)
+        for temp_count in range(6):
+            if count == temp_count == 0:
+                wrire_to_dict(num_dict, 0, arr)
+            if count >= temp_count != 0:
+                wrire_to_dict(num_dict, num * temp_count, arr)
+    return dict(sorted(num_dict.items()))
+
+
 def one_pair_generate(dice):
     one_pair_dict = {}
     for arr in dice:
@@ -234,9 +269,10 @@ def main():
     full_house_dict = full_house_generate(dice)
     small_straight_dict = small_straight_generate(dice)
     # large_straight_dict = large_straight_generate(dice)
-
     yezzi_dict = yezzi_generate(dice)
     chance_dict = chance_generate(dice)
+
+
     print("Test result")
     print('testing__count "one":')
     testing_count(one_dict)
@@ -244,26 +280,29 @@ def main():
     testing_count(two_dict)
     print('testing_count "three":')
     testing_count(three_dict)
+    # testing_arrs(three_dict)
     print('testing_count "four":')
     testing_count(four_dict)
     print('testing_count "five":')
     testing_count(five_dict)
     print('testing_count "six":')
     testing_count(six_dict)
-    print('testing_count "one pair":')
-    testing_count(one_pair_dict)
-    print('testing_count "two pair":')
-    testing_count(two_pair_dict)
-    print('testing_count "three of a kind":')
-    testing_count(three_of_a_kind_dict)
+    # print('testing_count "one pair":')
+    # testing_count(one_pair_dict)
+    # print('testing_count "two pair":')
+    # testing_count(two_pair_dict)
+    # print('testing_count "three of a kind":')
+    # testing_count(three_of_a_kind_dict)
+    # testing_arrs(three_of_a_kind_dict)
     print('testing_count "four of a kind":')
     testing_count(four_of_a_kind_dict)
-    print('testing_count "full house":')
-    testing_count(full_house_dict)
-    print('testing_count "small straight":')
-    testing_count(small_straight_dict)
+    # testing_arrs(four_of_a_kind_dict)
+    # print('testing_count "full house":')
+    # testing_count(full_house_dict)
+    # print('testing_count "small straight":')
+    # testing_count(small_straight_dict)
     # testing_arrs(small_straight_dict)
-    print('testing_count "large straight":')
+    # print('testing_count "large straight":')
     # testing_count()
     # print('testing_count "yezzi":')
     # testing_count(yezzi_dict)
