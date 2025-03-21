@@ -3,6 +3,27 @@ import itertools
 import json
 
 # Можно использовать Counter из collections для подсчета уникальных символов в массиве
+class CompactArrayEncoder(json.JSONEncoder):
+    def iterencode(self, o, _one_shot=False):
+        if isinstance(o, list) and all(isinstance(i, (int, float)) for i in o):
+            return f"[{','.join(map(str, o))}]"    
+        elif isinstance(o, list):
+            return "[\n" + ",\n".join(
+                self.iterencode(item).replace("\n", "\n  ") 
+                for item in o
+            ) + "\n]"       
+        elif isinstance(o, dict):
+            return "{\n" + ",\n".join([
+                f'"{k}": {self.iterencode(v).replace("\n", "\n  ")}'
+                for k, v in o.items()
+            ]) + "\n}"
+        return super().iterencode(o, _one_shot)
+
+class SuperCompactEncoder(json.JSONEncoder):
+    def encode(self, obj):
+        if isinstance(obj, list) and all(isinstance(i, (int, float)) for i in obj):
+            return f"[{','.join(map(str, obj))}]"
+        return super().encode(obj)
 
 def generate_dice():
     dice = list(itertools.product("123456", repeat=5))
@@ -267,12 +288,40 @@ def chance_generate(dice):
     return dict(sorted(dic_chance.items()))
 
 
+def game_data_jsonl(dice):
+    try:
+        game_data = {
+        "one": one_generate(dice),
+        "two": two_generate(dice),
+        "three": three_generate(dice),
+        "four": four_generate(dice),
+        "five": five_generate(dice),
+        "six": six_generate(dice),
+        "one_pair": one_pair_generate(dice),
+        "two_pair": two_pair_generate(dice),
+        "three_of_a_kind": three_of_a_kind_generate(dice),
+        "four_of_a_kind": four_of_a_kind_generate(dice),
+        "full_house": full_house_generate(dice),
+        "small_straight": small_straight_generate(dice),
+        "large_straight": large_straight_generate(dice),
+        "yezzi": yezzi_generate(dice),
+        "chance": chance_generate(dice),
+        }
+        with open("game_data.json", "w") as f:
+            json.dump(game_data, f, cls=CompactArrayEncoder, indent=2, ensure_ascii=False)
+
+
+                
+    except Exception as e:
+        print(f"Error occurred: {e}")
+    
+
 def testing_count(combination_dict):
     s = 0
     for i in combination_dict:
         print(f"Score: {i}, Count: {len(combination_dict[i])}")
         s += len(combination_dict[i])
-    print(f"s = {s}")
+    # print(f"s = {s}")
 
 
 def testing_arrs(combination_dict):
@@ -283,56 +332,53 @@ def testing_arrs(combination_dict):
 
 def main():
     dice = generate_dice()
-    print(len(dice))
-    one_dict = one_generate(dice)
-    two_dict = two_generate(dice)
-    three_dict = three_generate(dice)
-    four_dict = four_generate(dice)
-    five_dict = five_generate(dice)
-    six_dict = six_generate(dice)
-    one_pair_dict = one_pair_generate(dice)
-    two_pair_dict = two_pair_generate(dice)
-    three_of_a_kind_dict = three_of_a_kind_generate(dice)
-    four_of_a_kind_dict = four_of_a_kind_generate(dice)
-    full_house_dict = full_house_generate(dice)
-    small_straight_dict = small_straight_generate(dice)
-    large_straight_dict = large_straight_generate(dice)
-    yezzi_dict = yezzi_generate(dice)
-    chance_dict = chance_generate(dice)
+    # game_data_json(dice)
+    game_data_jsonl(dice)
+    # one_dict = one_generate(dice)
+    # two_dict = two_generate(dice)
+    # three_dict = three_generate(dice)
+    # four_dict = four_generate(dice)
+    # five_dict = five_generate(dice)
+    # six_dict = six_generate(dice)
+    # one_pair_dict = one_pair_generate(dice)
+    # two_pair_dict = two_pair_generate(dice)
+    # three_of_a_kind_dict = three_of_a_kind_generate(dice)
+    # four_of_a_kind_dict = four_of_a_kind_generate(dice)
+    # full_house_dict = full_house_generate(dice)
+    # small_straight_dict = small_straight_generate(dice)
+    # large_straight_dict = large_straight_generate(dice)
+    # yezzi_dict = yezzi_generate(dice)
+    # chance_dict = chance_generate(dice)
 
 
-    print("Test result")
-    print('testing__count "one":')
-    testing_count(one_dict)
-    print('testing_count "two":')
-    testing_count(two_dict)
-    print('testing_count "three":')
-    testing_count(three_dict)
-    # testing_arrs(three_dict)
-    print('testing_count "four":')
-    testing_count(four_dict)
-    print('testing_count "five":')
-    testing_count(five_dict)
-    print('testing_count "six":')
-    testing_count(six_dict)
+
+    # print("Test result")
+    # print('testing__count "one":')
+    # testing_count(one_dict)
+    # print('testing_count "two":')
+    # testing_count(two_dict)
+    # print('testing_count "three":')
+    # testing_count(three_dict)
+    # print('testing_count "four":')
+    # testing_count(four_dict)
+    # print('testing_count "five":')
+    # testing_count(five_dict)
+    # print('testing_count "six":')
+    # testing_count(six_dict)
     # print('testing_count "one pair":')
     # testing_count(one_pair_dict)
     # print('testing_count "two pair":')
     # testing_count(two_pair_dict)
     # print('testing_count "three of a kind":')
     # testing_count(three_of_a_kind_dict)
-    # testing_arrs(three_of_a_kind_dict)
-    print('testing_count "four of a kind":')
-    testing_count(four_of_a_kind_dict)
-    # testing_arrs(four_of_a_kind_dict)
+    # print('testing_count "four of a kind":')
+    # testing_count(four_of_a_kind_dict)
     # print('testing_count "full house":')
     # testing_count(full_house_dict)
     # print('testing_count "small straight":')
     # testing_count(small_straight_dict)
-    # testing_arrs(small_straight_dict)
-    print('testing_count "large straight":')
-    testing_count(large_straight_dict)
-    testing_arrs(large_straight_dict)
+    # print('testing_count "large straight":')
+    # testing_count(large_straight_dict)
     # print('testing_count "yezzi":')
     # testing_count(yezzi_dict)
     # print('testing_count "chance":')
