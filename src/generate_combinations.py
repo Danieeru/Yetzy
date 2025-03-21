@@ -26,7 +26,7 @@ def generate_dice():
         dice[i] = [int(x) for x in dice[i]]
     return dice
 
-def wrire_to_dict(dict_num, s, arr):
+def write_to_dict(dict_num, s, arr):
     if s not in dict_num:
         dict_num[s] = []
     dict_num[s].append(arr)
@@ -39,9 +39,9 @@ def one_generate(dice):
         count = arr.count(num)
         for temp_count in range(6):
             if count == temp_count == 0:
-                wrire_to_dict(num_dict, 0, arr)
+                write_to_dict(num_dict, 0, arr)
             if count >= temp_count != 0:
-                wrire_to_dict(num_dict, num * temp_count, arr)
+                write_to_dict(num_dict, num * temp_count, arr)
     return dict(sorted(num_dict.items()))
 
 
@@ -52,9 +52,9 @@ def two_generate(dice):
         count = arr.count(num)
         for temp_count in range(6):
             if count == temp_count == 0:
-                wrire_to_dict(num_dict, 0, arr)
+                write_to_dict(num_dict, 0, arr)
             if count >= temp_count != 0:
-                wrire_to_dict(num_dict, num * temp_count, arr)
+                write_to_dict(num_dict, num * temp_count, arr)
     return dict(sorted(num_dict.items()))
 
 
@@ -65,9 +65,9 @@ def three_generate(dice):
         count = arr.count(num)
         for temp_count in range(6):
             if count == temp_count == 0:
-                wrire_to_dict(num_dict, 0, arr)
+                write_to_dict(num_dict, 0, arr)
             if count >= temp_count != 0:
-                wrire_to_dict(num_dict, num * temp_count, arr)
+                write_to_dict(num_dict, num * temp_count, arr)
     return dict(sorted(num_dict.items()))
 
 
@@ -78,9 +78,9 @@ def four_generate(dice):
         count = arr.count(num)
         for temp_count in range(6):
             if count == temp_count == 0:
-                wrire_to_dict(num_dict, 0, arr)
+                write_to_dict(num_dict, 0, arr)
             if count >= temp_count != 0:
-                wrire_to_dict(num_dict, num * temp_count, arr)
+                write_to_dict(num_dict, num * temp_count, arr)
     return dict(sorted(num_dict.items()))
 
 
@@ -91,9 +91,9 @@ def five_generate(dice):
         count = arr.count(num)
         for temp_count in range(6):
             if count == temp_count == 0:
-                wrire_to_dict(num_dict, 0, arr)
+                write_to_dict(num_dict, 0, arr)
             if count >= temp_count != 0:
-                wrire_to_dict(num_dict, num * temp_count, arr)
+                write_to_dict(num_dict, num * temp_count, arr)
     return dict(sorted(num_dict.items()))
 
 
@@ -104,9 +104,9 @@ def six_generate(dice):
         count = arr.count(num)
         for temp_count in range(6):
             if count == temp_count == 0:
-                wrire_to_dict(num_dict, 0, arr)
+                write_to_dict(num_dict, 0, arr)
             if count >= temp_count != 0:
-                wrire_to_dict(num_dict, num * temp_count, arr)
+                write_to_dict(num_dict, num * temp_count, arr)
     return dict(sorted(num_dict.items()))
 
 
@@ -124,9 +124,9 @@ def one_pair_generate(dice):
             if count >= 2:
                 found = True
                 s = num * 2
-                wrire_to_dict(num_dict, s, arr)
+                write_to_dict(num_dict, s, arr)
         if not found:
-            wrire_to_dict(num_dict, 0, arr)
+            write_to_dict(num_dict, 0, arr)
 
     return dict(sorted(num_dict.items()))
 def two_pair_generate(dice):
@@ -146,10 +146,10 @@ def two_pair_generate(dice):
             elif count >= 2 and temp!= -1:
                 found = True
                 s = temp * 2 + num * 2
-                wrire_to_dict(num_dict, s, arr)
+                write_to_dict(num_dict, s, arr)
                 temp = -1
         if not found:
-            wrire_to_dict(num_dict, 0, arr)
+            write_to_dict(num_dict, 0, arr)
     return dict(sorted(num_dict.items()))
 def three_of_a_kind_generate(dice):
     num_dict = {}
@@ -165,9 +165,9 @@ def three_of_a_kind_generate(dice):
             if count >= 3:
                 found = True
                 s = num * 3
-                wrire_to_dict(num_dict, s, arr)
+                write_to_dict(num_dict, s, arr)
         if not found:
-            wrire_to_dict(num_dict, 0, arr)
+            write_to_dict(num_dict, 0, arr)
     return dict(sorted(num_dict.items()))           
 def four_of_a_kind_generate(dice):
     num_dict = {}
@@ -183,9 +183,9 @@ def four_of_a_kind_generate(dice):
             if count >= 4:
                 found = True
                 s = num * 4
-                wrire_to_dict(num_dict, s, arr)
+                write_to_dict(num_dict, s, arr)
         if not found:
-            wrire_to_dict(num_dict, 0, arr)
+            write_to_dict(num_dict, 0, arr)
     return dict(sorted(num_dict.items()))
 def full_house_generate(dice):
     # нету нормальной обрабоки случая 4 + 1
@@ -206,9 +206,9 @@ def full_house_generate(dice):
                     found = True
                     s += num * count
             if s != 0:
-                wrire_to_dict(num_dict, s, arr)
+                write_to_dict(num_dict, s, arr)
         if not found:
-            wrire_to_dict(num_dict, 0, arr)
+            write_to_dict(num_dict, 0, arr)
     return dict(sorted(num_dict.items()))      
 
 def small_straight_generate(dice):
@@ -228,9 +228,9 @@ def small_straight_generate(dice):
             if valid:
                 s = sum(subarray)
                 found = True
-                wrire_to_dict(num_dict, s, arr)
+                write_to_dict(num_dict, s, arr)
         if not found:
-            wrire_to_dict(num_dict, 0, arr)
+            write_to_dict(num_dict, 0, arr)
     return dict(sorted(num_dict.items()))  
 
 
@@ -251,9 +251,9 @@ def large_straight_generate(dice):
             if valid:
                 s = sum(subarray)
                 found = True
-                wrire_to_dict(num_dict, s, arr)
+                write_to_dict(num_dict, s, arr)
         if not found:
-            wrire_to_dict(num_dict, 0, arr)
+            write_to_dict(num_dict, 0, arr)
     return dict(sorted(num_dict.items()))
 
 
@@ -271,9 +271,9 @@ def yezzi_generate(dice):
             if count == 5:
                 s = num * 5
                 found = True
-                wrire_to_dict(num_dict, s, arr)
+                write_to_dict(num_dict, s, arr)
         if not found:
-            wrire_to_dict(num_dict, 0, arr)
+            write_to_dict(num_dict, 0, arr)
     return dict(sorted(num_dict.items()))
 
 
@@ -281,7 +281,7 @@ def chance_generate(dice):
     num_dict = {}
     for arr in dice:
         s = sum(arr)
-        wrire_to_dict(num_dict, s, arr)
+        write_to_dict(num_dict, s, arr)
     return dict(sorted(num_dict.items()))
 
 
