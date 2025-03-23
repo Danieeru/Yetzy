@@ -12,18 +12,21 @@ class NumberRangeError(Exception):
     pass
 
 class DuplicateNumberError(Exception):
-    "The numbr is already found in the array"
+    "The number is already found in the array"
     pass
 
 def validate_array(arr):
     if len(arr) > 5:
         raise ArraySizeError("The length of the array must not be greater than 5")
+    arr = list(arr.replace(" ", ""))
     for num in arr:
-        if not 1 <= num <= 5:
-            raise NumberRangeError("The number should be in range from 1 to 5")
-    if len(arr) != len(set(arr)):
-        raise DuplicateNumberError("The array should not contain duplicate numbers")
-
+        if not num.isdigit():
+            raise InvalidArgumentError("The numbers must be")
+    arr = list(map(int, arr))
+    for num in arr:
+        if not 1 <= num <= 6:
+            raise NumberRangeError("The numbers should be in range from 1 to 6")
+    return arr
 
 def create_object_dice(die_face):
     DICE_DATA = """+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +
@@ -55,9 +58,14 @@ def roll_five_dice() -> list[int]:
     return results
 
 def reroll_few_dice(result: list[int], reroll_dices: list[int]):
-    for die in reroll_dices:
-        new_result = random.randint(1, 6)
-        result[die - 1] = new_result
+    new_result = []
+    for num in result:
+        if num in reroll_dices:
+            new_result.append(reroll_dices.pop(reroll_dices.index(num)))
+        elif num not in reroll_dices:
+            new_result.append(random.randint(1, 6))
+    for i in range(len(new_result)):
+        result[i] = new_result[i]
 
 
 def one_turn():
@@ -69,9 +77,9 @@ def one_turn():
     for i in range(2):
         print(f"{i + 1}: Rerolling...")
         try:
-            reroll_dices = list(map(int, input().split(" ")))
-            validate_array(reroll_dices)
-            reroll_few_dice(result, reroll_dices)
+            reroll = input()
+            reroll = validate_array(reroll)
+            reroll_few_dice(result, reroll)
             print(f"Updated result: {result}")
             check_all_combinations(result)
             print_five_dice(result) 
@@ -230,6 +238,7 @@ def check_all_combinations(result):
         "Ецци": number_of_a_kind_check(result, 5),
         "Шанс": chance_check(result)
     }
+    res = dict(reversed(sorted(res.items(), key=lambda item: item[1])))
     for comb, r in res.items():
         if r == 0:
             continue
@@ -267,6 +276,9 @@ def main():
         for i in range(len(players)):
             print(f"{players[i]}:")
             one_turn()
+            # функция записи
+            # функция печати измененной таблицы
+
         turn += 1
 
 
