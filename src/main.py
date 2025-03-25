@@ -5,28 +5,73 @@ import sys
 
 class ArraySizeError(Exception):
     "Invalid array size"
-    pass
-
 class NumberRangeError(Exception):
     "The number is not in the desired range"
-    pass
+class InvalidArgumentError(Exception):
+    "Invalid argument"
 
-class DuplicateNumberError(Exception):
-    "The number is already found in the array"
-    pass
+def get_valid_number():
+    while True:
+        user_input = input("Количество игроков: ").strip()
+        if not user_input:
+            print("Ошибка! Введите не пустое значение")
+            continue
+        try:
+            number = int(user_input)
+            if 1 <= number <= 6:
+                return number
+            else:
+                print(f"Ошибка! Количество игроков может быть от 1 до 6")
+        except ValueError:
+            print(f"Ошибка '{user_input}' не является целым числом")
+        
+def get_valid_array(dice):
+    count_res = {}
+    for num in dice:
+        if num in count_res:
+            count_res[num] += 1
+        else:
+            count_res[num] = 1
+    while True:
+        user_input = input("Оставить: ")
+        if user_input == "all":
+            return "all"
+        if not user_input:
+            return []
+        elements = list(user_input.replace(" ", ""))
+        if len(elements) > 5:
+            print("Ошибка! Нельзя оставить больше пяти костей")
+            continue
+        val_nums = []
+        val_nums_count = {}
+        for elem in elements:
+            try:
+                number = int(elem)
+                if 1 <= number <= 6:
+                    val_nums.append(number)
+                else:
+                    print(f"Ошибка! Число не входит в диапазон 1 - 6")
+                    break
+            except ValueError:
+                print(f"Ошибка! Должны быть только целые числа")
+                break
+        else:
+            for num in val_nums:
+                if num in val_nums_count:
+                    val_nums_count[num] += 1
+                else:
+                    val_nums_count[num] = 1
+            for num, count in val_nums_count.items():
+                if num not in count_res or count > count_res[num]:
+                    print("Ошибка! Таких костей нет!")
+                    break
+            else:
+                return val_nums
 
-def validate_array(arr):
-    if len(arr) > 5:
-        raise ArraySizeError("The length of the array must not be greater than 5")
-    arr = list(arr.replace(" ", ""))
-    for num in arr:
-        if not num.isdigit():
-            raise InvalidArgumentError("The numbers must be")
-    arr = list(map(int, arr))
-    for num in arr:
-        if not 1 <= num <= 6:
-            raise NumberRangeError("The numbers should be in range from 1 to 6")
-    return arr
+
+
+        # else:
+        #     return val_nums
 
 def create_object_dice(die_face):
     DICE_DATA = """+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +
@@ -42,8 +87,8 @@ def create_object_dice(die_face):
     return faces[die_face - 1]
 
   
-def print_five_dice(result):
-    faces = [create_object_dice(die) for die in result]
+def print_five_dice(dice):
+    faces = [create_object_dice(die) for die in dice]
     for i in range(len(faces)):
         for j in range(len(faces[0])):
             print(faces[j][i], end=' ')
@@ -51,57 +96,51 @@ def print_five_dice(result):
 
 
 def roll_five_dice() -> list[int]:
-    results = []
+    dice = []
     for _ in range(5):
         die = random.randint(1, 6)
-        results.append(die)
-    return results
+        dice.append(die)
+    return dice
 
-def reroll_few_dice(result: list[int], reroll_dices: list[int]):
-    new_result = []
-    for num in result:
+def reroll_few_dice(dice: list[int], reroll_dices: list[int]):
+    if reroll_dices == "all":
+        return dice
+    new_dice = []
+    for num in dice:
         if num in reroll_dices:
-            new_result.append(reroll_dices.pop(reroll_dices.index(num)))
+            new_dice.append(reroll_dices.pop(reroll_dices.index(num)))
         elif num not in reroll_dices:
-            new_result.append(random.randint(1, 6))
-    for i in range(len(new_result)):
-        result[i] = new_result[i]
+            new_dice.append(random.randint(1, 6))
+    for i in range(len(new_dice)):
+        dice[i] = new_dice[i]
 
 
 def one_turn():
     print("Rolling five dice...")
-    result = roll_five_dice()
-    # print(f"Result: {result}")
-    check_all_combinations(result)
-    print_five_dice(result)
+    dice = roll_five_dice()
+    print_five_dice(dice)
+    res = check_all_combinations(dice)
     for i in range(2):
         print(f"{i + 1}: Rerolling...")
-        try:
-            reroll = input()
-            reroll = validate_array(reroll)
-            reroll_few_dice(result, reroll)
-            print(f"Updated result: {result}")
-            check_all_combinations(result)
-            print_five_dice(result) 
-        except ArraySizeError as e:
-            print(f"Size Error: {e}")
-        except NumberRangeError as e:
-            print(f"Range Error: {e}")
-        except DuplicateNumberError as e:
-            print(f"Uniqueness Error: {e}")
-        except Exception as e:
-            print(f"Unexpected Error: {e}")
+        reroll = get_valid_array(dice)
+        reroll_few_dice(dice, reroll)
+        print(f"Updated dice: {dice}")
+        print_five_dice(dice) 
+        res = check_all_combinations(dice)
+    return res
+    
 
 
-def add_players():
+def add_players(count_players):
     players = []
-    count_players = int(input("Количество игроков: "))
-    if count_players < 1 or count_players > 4:
-        print("Количество игроков должно быть между 1 и 4.")
-        return
     for i in range(count_players):
-        player_name = input(f"Имя игрока {i + 1}: ")
-        players.append(player_name)
+        while True:
+            player_name = input(f"Имя игрока {i + 1}: ")
+            if not player_name:
+                print("Ошибка! Имя не может быть пустым")
+            else:
+                players.append(player_name)
+                break
     return players
 
 
@@ -111,6 +150,8 @@ def create_start_table(combinations_ru, players):
         for i in range(count_players):
             if comb == "64/35":
                 player.append(players[i])
+            elif comb == "Сумма":
+                player.append(0)
             else:
                 player.append("")
 
@@ -127,10 +168,10 @@ def draw_table(combinations_ru, players):
         print()
 
 
-def two_pairs_check(result):
+def two_pairs_check(dice):
     counts = {}
     s = 0
-    for num in result:
+    for num in dice:
         if num not in counts:
             counts[num] = 1
         else:
@@ -144,9 +185,9 @@ def two_pairs_check(result):
     return s
             
 
-def full_house_check(result):
+def full_house_check(dice):
     counts = {}
-    for num in result:
+    for num in dice:
         if num not in counts:
             counts[num] = 1
         else:
@@ -159,29 +200,30 @@ def full_house_check(result):
     return s
         
     
-def small_straight_check(result):
-    counts = {}
-    temp = result.copy()
+def small_straight_check(dice):
+    temp = dice.copy()
     temp.sort()
     n = len(temp)
     res = 0
-    for i in range(n - 3):
-        sub = temp[i:i+4]
+    for i in range(n):
+        temp = dice.copy()
+        temp.pop(i)
+        temp.sort()
         valid = True
         for j in range(3):
-            if sub[j + 1] != sub[j] + 1:
+            if temp[j + 1] != temp[j] + 1:
                 valid = False
                 break
         if valid:
-            s = sum(sub)
+            s = sum(temp)
             if s > res:
                 res = s
     return res
 
 
-def large_straight_check(result):
+def large_straight_check(dice):
     counts = {}
-    temp = result.copy()
+    temp = dice.copy()
     temp.sort()
     n = len(temp)
     res = 0
@@ -220,67 +262,197 @@ def number_of_a_kind_check(dices, number):
     return res
 
 
-def check_all_combinations(result):
+def check_all_combinations(dice):
     res = {
-        "1": number_check(result, 1),
-        "2": number_check(result, 2),
-        "3": number_check(result, 3),
-        "4": number_check(result, 4),
-        "5": number_check(result, 5),
-        "6": number_check(result, 6),
-        "Пара": number_of_a_kind_check(result, 2),
-        "Две пары": two_pairs_check(result),
-        "Сет": number_of_a_kind_check(result, 3),
-        "Каре": number_of_a_kind_check(result, 4),
-        "Фулл Хаус": full_house_check(result),
-        "Малый стрит": small_straight_check(result),
-        "Большой стрит": large_straight_check(result),
-        "Ецци": number_of_a_kind_check(result, 5),
-        "Шанс": chance_check(result)
+        "Один": number_check(dice, 1),
+        "Два": number_check(dice, 2),
+        "Три": number_check(dice, 3),
+        "Четыре": number_check(dice, 4),
+        "Пять": number_check(dice, 5),
+        "Шесть": number_check(dice, 6),
+        "Пара": number_of_a_kind_check(dice, 2),
+        "Две Пары": two_pairs_check(dice),
+        "Сет": number_of_a_kind_check(dice, 3),
+        "Каре": number_of_a_kind_check(dice, 4),
+        "Фулл Хаус": full_house_check(dice),
+        "Малый Стрит": small_straight_check(dice),
+        "Большой Стрит": large_straight_check(dice),
+        "Ецци": number_of_a_kind_check(dice, 5),
+        "Шанс": chance_check(dice)
     }
     res = dict(reversed(sorted(res.items(), key=lambda item: item[1])))
     for comb, r in res.items():
         if r == 0:
             continue
         else:
-            print(comb, r)
+            print(f"| {comb}: {r} ", end="")
+    print("|", end="\n")
+    return res
+
+
+def write_res_in_table(combinations_ru, res, players, player):
+    while True:
+        com_input = input("Запись: ").lower().strip().replace(" ", "")
+        if com_input == "1" or com_input == "один":
+            if combinations_ru["Один"][player] == "":
+                combinations_ru["Один"][player] = res["Один"]
+                combinations_ru["Сумма"][player] += res["Один"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")   
+                continue     
+        elif com_input == "2" or com_input == "два":
+            if combinations_ru["Два"][player] == "":
+                combinations_ru["Два"][player] = res["Два"]
+                combinations_ru["Сумма"][player] += res["Два"]
+                break  
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "3" or com_input == "три":
+            if combinations_ru["Три"][player] == "":
+                combinations_ru["Три"][player] = res["Три"]
+                combinations_ru["Сумма"][player] += res["Три"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "4" or com_input == "четыре":
+            if combinations_ru["Четыре"][player] == "":
+                combinations_ru["Четыре"][player] = res["Четыре"]
+                combinations_ru["Сумма"][player] += res["Четыре"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "5" or com_input == "пять":
+            if combinations_ru["Пять"][player] == "":
+                combinations_ru["Пять"][player] = res["Пять"]
+                combinations_ru["Сумма"][player] += res["Пять"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "6" or com_input == "шесть":
+            if combinations_ru["Шесть"][player] == "":
+                combinations_ru["Шесть"][player] = res["Шесть"]
+                combinations_ru["Сумма"][player] += res["Шесть"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "пара" or com_input == "п":
+            if combinations_ru["Пара"][player] == "":
+                combinations_ru["Пара"][player] = res["Пара"]
+                combinations_ru["Сумма"][player] += res["Пара"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue 
+        elif com_input == "двепары" or com_input == "пп":
+            if combinations_ru["Две Пары"][player] == "":
+                combinations_ru["Две Пары"][player] = res["Две Пары"]
+                combinations_ru["Сумма"][player] += res["Две Пары"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue 
+        elif com_input == "сет" or com_input == "с":
+            if combinations_ru["Сет"][player] == "":
+                combinations_ru["Сет"][player] = res["Сет"]
+                combinations_ru["Сумма"][player] += res["Сет"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "каре" or com_input == "к":
+            if combinations_ru["Каре"][player] == "":
+                combinations_ru["Каре"][player] = res["Каре"]
+                combinations_ru["Сумма"][player] += res["Каре"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "фуллхаус" or com_input == "фх" or com_input == "ф":
+            if combinations_ru["Фулл Хаус"][player] == "":
+                combinations_ru["Фулл Хаус"][player] = res["Фулл Хаус"]
+                combinations_ru["Сумма"][player] += res["Фулл Хаус"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue 
+        elif com_input == "малыйстрит" or com_input == "мс" or com_input == "м":
+            if combinations_ru["Малый Стрит"][player] == "":
+                combinations_ru["Малый Стрит"][player] = res["Малый Стрит"]
+                combinations_ru["Сумма"][player] += res["Малый Стрит"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue 
+        elif com_input == "большойстрит" or com_input == "бс" or com_input == "б":
+            if combinations_ru["Большой Стрит"][player] == "":
+                combinations_ru["Большой Стрит"][player] = res["Большой Стрит"]
+                combinations_ru["Сумма"][player] += res["Большой Стрит"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "ецци" or com_input == "е":
+            if combinations_ru["Ецци"][player] == "":
+                combinations_ru["Ецци"][player] = res["Ецци"]
+                combinations_ru["Сумма"][player] += res["Ецци"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        elif com_input == "шанс" or com_input == "ш":
+            if combinations_ru["Шанс"][player] == "":
+                combinations_ru["Шанс"][player] = res["Шанс"]
+                combinations_ru["Сумма"][player] += res["Шанс"]
+                break
+            else:
+                print("Ошибка! Результат уже записан.")
+                continue
+        else:
+            print("Ошибка! Нет такой команды!")
+            continue
+
+
 def main():
     combinations_ru = {
         "64/35": [],
-        "1": [],
-        "2": [],
-        "3": [],
-        "4": [],
-        "5": [],
-        "6": [],
+        "Один": [],
+        "Два": [],
+        "Три": [],
+        "Четыре": [],
+        "Пять": [],
+        "Шесть": [],
         "Пара": [],
-        "2 пары": [],
+        "Две Пары": [],
         "Сет": [],
         "Каре": [],
-        "Фулл хаус": [],
-        "Малый стрит": [],
-        "Большой стрит": [],
+        "Фулл Хаус": [],
+        "Малый Стрит": [],
+        "Большой Стрит": [],
         "Ецци": [],
         "Шанс": [],
         "Сумма": []
-        }
+    }
     print("Welcome to Yezzi!")
-    players = add_players()
-    count_players = len(players)
+    count_players = get_valid_number()
+    players = add_players(count_players)
     create_start_table(combinations_ru, players)
     print("Starting grid:")
     draw_table(combinations_ru, players)
     turn = 1
     while True:
         print(f"Turn {turn}")
-        for i in range(len(players)):
-            print(f"{players[i]}:")
-            one_turn()
-            # функция записи
-            # функция печати измененной таблицы
-
+        for player in range(len(players)):
+            print(f"{players[player]}:")
+            res = one_turn()
+            write_res_in_table(combinations_ru, res, players, player)
+            draw_table(combinations_ru, players)
         turn += 1
-
 
 
 
