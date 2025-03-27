@@ -1,14 +1,6 @@
 import random
-# import pandas as pd
-# import numpy as np
 import sys
 
-class ArraySizeError(Exception):
-    "Invalid array size"
-class NumberRangeError(Exception):
-    "The number is not in the desired range"
-class InvalidArgumentError(Exception):
-    "Invalid argument"
 
 def get_valid_number() -> int:
     while True:
