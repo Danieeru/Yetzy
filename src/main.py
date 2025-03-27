@@ -102,8 +102,7 @@ def reroll_few_dice(dice: list[int], reroll_dices: list[int]):
 
 def one_turn(combinations_ru, player) -> dict[str]:
     print("Rolling five dice...")
-    # dice = roll_five_dice()
-    dice = [1, 6, 4, 1, 6]
+    dice = roll_five_dice()
     print_five_dice(dice)
     res = check_all_combinations(dice)
     print_comb(res, combinations_ru, player)
