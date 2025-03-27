@@ -10,7 +10,7 @@ class NumberRangeError(Exception):
 class InvalidArgumentError(Exception):
     "Invalid argument"
 
-def get_valid_number():
+def get_valid_number() -> int:
     while True:
         user_input = input("Количество игроков: ").strip()
         if not user_input:
@@ -25,7 +25,7 @@ def get_valid_number():
         except ValueError:
             print(f"Ошибка '{user_input}' не является целым числом")
         
-def get_valid_array(dice):
+def get_valid_array(dice: list[int]) -> list[int]:
     count_res = {}
     for num in dice:
         if num in count_res:
@@ -34,8 +34,8 @@ def get_valid_array(dice):
             count_res[num] = 1
     while True:
         user_input = input("Оставить: ")
-        if user_input == "all":
-            return "all"
+        if user_input == "з":
+            return "з"
         if not user_input:
             return []
         elements = list(user_input.replace(" ", ""))
@@ -73,21 +73,19 @@ def get_valid_array(dice):
         # else:
         #     return val_nums
 
-def create_object_dice(die_face):
-    DICE_DATA = """+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +
-|         |,|  o      |,|  o      |,|  o   o  |,|  o   o  |,|  o   o  |
-|    o    |,|         |,|    o    |,|         |,|    o    |,|  o   o  |
-|         |,|      o  |,|      o  |,|  o   o  |,|  o   o  |,|  o   o  |
-+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +,+ - - - - +
-"""
-    faces = [[] for _ in range(6)]
-    for line in DICE_DATA.splitlines():
-        for i, section in enumerate(line.split(',')):
-            faces[i].append(section)
+def create_object_dice(die_face: int) -> list[str]:
+    faces = [
+        ["+ - - - - +", "|         |", "|    o    |", "|         |", "+ - - - - +"],
+        ["+ - - - - +", "|  o      |", "|         |", "|      o  |", "+ - - - - +"],
+        ["+ - - - - +", "|  o      |", "|    o    |", "|      o  |", "+ - - - - +"],
+        ["+ - - - - +", "|  o   o  |", "|         |", "|  o   o  |", "+ - - - - +"],
+        ["+ - - - - +", "|  o   o  |", "|    o    |", "|  o   o  |", "+ - - - - +"],
+        ["+ - - - - +", "|  o   o  |", "|  o   o  |", "|  o   o  |", "+ - - - - +"],
+    ]
     return faces[die_face - 1]
 
   
-def print_five_dice(dice):
+def print_five_dice(dice: list[int]):
     faces = [create_object_dice(die) for die in dice]
     for i in range(len(faces)):
         for j in range(len(faces[0])):
@@ -103,7 +101,7 @@ def roll_five_dice() -> list[int]:
     return dice
 
 def reroll_few_dice(dice: list[int], reroll_dices: list[int]):
-    if reroll_dices == "all":
+    if reroll_dices == "з":
         return dice
     new_dice = []
     for num in dice:
@@ -115,7 +113,7 @@ def reroll_few_dice(dice: list[int], reroll_dices: list[int]):
         dice[i] = new_dice[i]
 
 
-def one_turn():
+def one_turn() -> dict[str]:
     print("Rolling five dice...")
     dice = roll_five_dice()
     print_five_dice(dice)
@@ -200,24 +198,21 @@ def full_house_check(dice):
     return s
         
     
-def small_straight_check(dice):
-    temp = dice.copy()
-    temp.sort()
-    n = len(temp)
+def small_straight_check(dice: list[int]):
     res = 0
-    for i in range(n):
-        temp = dice.copy()
-        temp.pop(i)
-        temp.sort()
-        valid = True
-        for j in range(3):
-            if temp[j + 1] != temp[j] + 1:
-                valid = False
-                break
-        if valid:
-            s = sum(temp)
-            if s > res:
-                res = s
+    dices_unique = list(set(sorted(dice)))
+    if len(dices_unique) >= 4:
+        for i in range(len(dices_unique) - 3):
+            flagOk = True
+            localSum = 0
+            for j in range(3):
+                if dices_unique[i + j + 1] != dices_unique[i + j] + 1:
+                    flagOk = False
+                    break
+            if flagOk:
+                for j in range(4):
+                    localSum += dices_unique[i + j]
+                if localSum > res: res = localSum
     return res
 
 
@@ -290,13 +285,14 @@ def check_all_combinations(dice):
     return res
 
 
-def write_res_in_table(combinations_ru, res, players, player):
+def write_res_in_table(combinations_ru, res, player, block_nums: list[int], block_num_bool: list[bool]):
     while True:
         com_input = input("Запись: ").lower().strip().replace(" ", "")
         if com_input == "1" or com_input == "один":
             if combinations_ru["Один"][player] == "":
                 combinations_ru["Один"][player] = res["Один"]
                 combinations_ru["Сумма"][player] += res["Один"]
+                block_nums[player] += res["Один"]
                 break
             else:
                 print("Ошибка! Результат уже записан.")   
@@ -305,6 +301,7 @@ def write_res_in_table(combinations_ru, res, players, player):
             if combinations_ru["Два"][player] == "":
                 combinations_ru["Два"][player] = res["Два"]
                 combinations_ru["Сумма"][player] += res["Два"]
+                block_nums[player] += res["Два"]
                 break  
             else:
                 print("Ошибка! Результат уже записан.")
@@ -313,6 +310,7 @@ def write_res_in_table(combinations_ru, res, players, player):
             if combinations_ru["Три"][player] == "":
                 combinations_ru["Три"][player] = res["Три"]
                 combinations_ru["Сумма"][player] += res["Три"]
+                block_nums[player] += res["Три"]
                 break
             else:
                 print("Ошибка! Результат уже записан.")
@@ -321,6 +319,7 @@ def write_res_in_table(combinations_ru, res, players, player):
             if combinations_ru["Четыре"][player] == "":
                 combinations_ru["Четыре"][player] = res["Четыре"]
                 combinations_ru["Сумма"][player] += res["Четыре"]
+                block_nums[player] += res["Четыре"]
                 break
             else:
                 print("Ошибка! Результат уже записан.")
@@ -329,6 +328,7 @@ def write_res_in_table(combinations_ru, res, players, player):
             if combinations_ru["Пять"][player] == "":
                 combinations_ru["Пять"][player] = res["Пять"]
                 combinations_ru["Сумма"][player] += res["Пять"]
+                block_nums[player] += res["Пять"]
                 break
             else:
                 print("Ошибка! Результат уже записан.")
@@ -337,6 +337,7 @@ def write_res_in_table(combinations_ru, res, players, player):
             if combinations_ru["Шесть"][player] == "":
                 combinations_ru["Шесть"][player] = res["Шесть"]
                 combinations_ru["Сумма"][player] += res["Шесть"]
+                block_nums[player] += res["Шесть"]
                 break
             else:
                 print("Ошибка! Результат уже записан.")
@@ -416,6 +417,19 @@ def write_res_in_table(combinations_ru, res, players, player):
         else:
             print("Ошибка! Нет такой команды!")
             continue
+    if block_nums[player] >= 64 and block_num_bool[player] == False:
+        block_num_bool[player] = True
+        combinations_ru["Сумма"][player] += 35
+        print("БЛОК СОБРАН! +35")
+
+
+def calc_cell(combinations_ru):
+    s = 0
+    for comb, scores in combinations_ru.items():
+        if comb == "64/35" or comb == "Сумма":
+            continue
+        s += len(scores)
+    return s
 
 
 def main():
@@ -441,20 +455,22 @@ def main():
     print("Welcome to Yezzi!")
     count_players = get_valid_number()
     players = add_players(count_players)
+    block_nums = [0 for i in players]
+    block_num_bool = [False for i in players]
     create_start_table(combinations_ru, players)
     print("Starting grid:")
     draw_table(combinations_ru, players)
+    cells = calc_cell(combinations_ru)
     turn = 1
-    while True:
+    valid = True
+    while cells >= turn * count_players:
         print(f"Turn {turn}")
         for player in range(len(players)):
             print(f"{players[player]}:")
             res = one_turn()
-            write_res_in_table(combinations_ru, res, players, player)
+            write_res_in_table(combinations_ru, res, player, block_nums, block_num_bool)
             draw_table(combinations_ru, players)
         turn += 1
-
-
 
 
 if __name__ == "__main__":
