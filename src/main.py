@@ -1,7 +1,6 @@
 import random
 import sys
 
-
 def get_valid_number() -> int:
     while True:
         user_input = input("Количество игроков: ").strip()
@@ -101,11 +100,13 @@ def reroll_few_dice(dice: list[int], reroll_dices: list[int]):
         dice[i] = die
 
 
-def one_turn() -> dict[str]:
+def one_turn(combinations_ru, player) -> dict[str]:
     print("Rolling five dice...")
-    dice = roll_five_dice()
+    # dice = roll_five_dice()
+    dice = [1, 6, 4, 1, 6]
     print_five_dice(dice)
     res = check_all_combinations(dice)
+    print_comb(res, combinations_ru, player)
     for i in range(2):
         print(f"{i + 1}: Rerolling...")
         reroll = get_valid_array(dice)
@@ -113,6 +114,7 @@ def one_turn() -> dict[str]:
         print(f"Updated dice: {dice}")
         print_five_dice(dice)
         res = check_all_combinations(dice)
+        print_comb(res, combinations_ru, player)
     return res
 
 
@@ -165,7 +167,7 @@ def two_pairs_check(dice):
     for num, count in counts.items():
         if count >= 2 and temp == -1:
             temp = num
-        elif count >= 2 and temp != 1:
+        elif count >= 2 and temp != -1:
             s = temp * 2 + num * 2
     return s
 
@@ -264,13 +266,17 @@ def check_all_combinations(dice):
         "Шанс": chance_check(dice)
     }
     res = dict(reversed(sorted(res.items(), key=lambda item: item[1])))
+    return res
+
+def print_comb(res, combinations_ru, player):
     for comb, r in res.items():
-        if r != 0:
+        if r != 0 and combinations_ru[comb][player] == "":
             print(f"| {comb}: {r} ", end="")
         else:
             continue
     print("|", end="\n")
-    return res
+    
+
 
 
 def write_res_in_table(combinations_ru, res, player, block_nums: list[int], block_num_bool: list[bool]):
@@ -358,14 +364,14 @@ def write_res_in_table(combinations_ru, res, player, block_nums: list[int], bloc
                 combinations_ru["Сумма"][player] += res["Фулл Хаус"]
             else:
                 print("Ошибка! Результат уже записан.")
-                continue 
+                continue
         elif com_input in ("малыйстрит", "м", "мс"):
             if combinations_ru["Малый Стрит"][player] == "":
                 combinations_ru["Малый Стрит"][player] = res["Малый Стрит"]
                 combinations_ru["Сумма"][player] += res["Малый Стрит"]
             else:
                 print("Ошибка! Результат уже записан.")
-                continue 
+                continue
         elif com_input in ("большойстрит", "б", "бс"):
             if combinations_ru["Большой Стрит"][player] == "":
                 combinations_ru["Большой Стрит"][player] = res["Большой Стрит"]
@@ -440,7 +446,7 @@ def main():
         print(f"Turn {turn}")
         for i, player in enumerate(players):
             print(f"{player}:")
-            res = one_turn()
+            res = one_turn(combinations_ru, i)
             write_res_in_table(combinations_ru, res, i, block_nums, block_num_bool)
             draw_table(combinations_ru, players)
         turn += 1
