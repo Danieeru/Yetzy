@@ -1,5 +1,6 @@
 import random
 import sys
+import combinations as comb
 
 
 def get_valid_number() -> int:
@@ -155,115 +156,23 @@ def draw_table(combinations: dict[str, list[str]], players: list[str]) -> None:
         print()
 
 
-def two_pairs_check(dice: list[int]) -> int:
-    counts = {}
-    s = 0
-    for num in dice:
-        if num not in counts:
-            counts[num] = 1
-        else:
-            counts[num] += 1
-    temp = -1
-    for num, count in counts.items():
-        if count >= 2 and temp == -1:
-            temp = num
-        elif count >= 2 and temp != -1:
-            s = temp * 2 + num * 2
-    return s
-
-
-def full_house_check(dice: list[int]) -> int:
-    counts = {}
-    for num in dice:
-        if num not in counts:
-            counts[num] = 1
-        else:
-            counts[num] += 1
-    s = 0
-    if len(counts) == 2:
-        for num, count in counts.items():
-            if count in (2, 3):
-                s += num * count
-    return s
-
-
-def small_straight_check(dice: list[int]) -> int:
-    res = 0
-    dices_unique = list(set(sorted(dice)))
-    if len(dices_unique) >= 4:
-        for i in range(len(dices_unique) - 3):
-            flag = True
-            s = 0
-            for j in range(3):
-                if dices_unique[i + j + 1] != dices_unique[i + j] + 1:
-                    flag = False
-                    break
-            if flag:
-                for j in range(4):
-                    s += dices_unique[i + j]
-                res = max(res, s)
-    return res
-
-
-def large_straight_check(dice: list[int]) -> int:
-    temp = dice.copy()
-    temp.sort()
-    n = len(temp)
-    res = 0
-    for i in range(n - 4):
-        sub = temp[i:i+5]
-        valid = True
-        for j in range(4):
-            if sub[j + 1] != sub[j] + 1:
-                valid = False
-                break
-        if valid:
-            s = sum(sub)
-            res = max(res, s)
-    return res
-
-
-def chance_check(dices: list[int]) -> int:
-    return sum(dices)
-
-
-def number_check(dices: list[int], number: int) -> int:
-    number_in_dices = dices.count(number)
-    return number_in_dices * number
-
-
-def number_of_a_kind_check(dices: list[int], number: int) -> int:
-    counts = {}
-    for num in dices:
-        if num not in counts:
-            counts[num] = 1
-        else:
-            counts[num] += 1
-    res = 0
-    for num, count in counts.items():
-        if count >= number:
-            s = number * num
-            res = max(res, s)
-    return res
-
-
 def check_all_combinations(dice: list[int]) -> dict[str, int]:
     res = {
-        "Ones": number_check(dice, 1),
-        "Twos": number_check(dice, 2),
-        "Threes": number_check(dice, 3),
-        "Fours": number_check(dice, 4),
-        "Fives": number_check(dice, 5),
-        "Sixes": number_check(dice, 6),
-        "Pair": number_of_a_kind_check(dice, 2),
-        "Two Pairs": two_pairs_check(dice),
-        "Three of a Kind": number_of_a_kind_check(dice, 3),
-        "Four of a Kind": number_of_a_kind_check(dice, 4),
-        "Full House": full_house_check(dice),
-        "Small Straight": small_straight_check(dice),
-        "Large Straight": large_straight_check(dice),
-        "Yezzi": number_of_a_kind_check(dice, 5),
-        "Chance": chance_check(dice)
+        "Ones": comb.number_check(dice, 1),
+        "Twos": comb.number_check(dice, 2),
+        "Threes": comb.number_check(dice, 3),
+        "Fours": comb.number_check(dice, 4),
+        "Fives": comb.number_check(dice, 5),
+        "Sixes": comb.number_check(dice, 6),
+        "Pair": comb.number_of_a_kind_check(dice, 2),
+        "Two Pairs": comb.two_pairs_check(dice),
+        "Three of a Kind": comb.number_of_a_kind_check(dice, 3),
+        "Four of a Kind": comb.number_of_a_kind_check(dice, 4),
+        "Full House": comb.full_house_check(dice),
+        "Small Straight": comb.small_straight_check(dice),
+        "Large Straight": comb.large_straight_check(dice),
+        "Yezzi": comb.number_of_a_kind_check(dice, 5),
+        "Chance": comb.chance_check(dice)
     }
     res = dict(reversed(sorted(res.items(), key=lambda item: item[1])))
     return res
