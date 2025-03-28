@@ -1,9 +1,19 @@
+"""
+Module for checking various combinations in the Yatzy game.
+Contains functions for calculating points based on rolled dice.
+Each function takes a list of dice values and returns the number of points.
+"""
+
 def number_check(dices: list[int], number: int) -> int:
+    """Calculates the sum of points for a specific number 
+    by multiplying its occurrences by the number itself."""
     number_in_dices = dices.count(number)
     return number_in_dices * number
 
 
 def number_of_a_kind_check(dices: list[int], number: int) -> int:
+    """Checks for a combination of the specified number of 
+    identical numbers and returns their sum."""
     counts = {}
     for num in dices:
         if num not in counts:
@@ -18,6 +28,7 @@ def number_of_a_kind_check(dices: list[int], number: int) -> int:
     return res
 
 def two_pairs_check(dice: list[int]) -> int:
+    """Checks for two pairs of identical numbers and returns the sum of these pairs."""
     counts = {}
     s = 0
     for num in dice:
@@ -35,6 +46,8 @@ def two_pairs_check(dice: list[int]) -> int:
 
 
 def full_house_check(dice: list[int]) -> int:
+    """Checks for a full house combination (three of a kind plus a pair) 
+    and returns the sum of all dice."""
     counts = {}
     for num in dice:
         if num not in counts:
@@ -50,6 +63,7 @@ def full_house_check(dice: list[int]) -> int:
 
 
 def small_straight_check(dice: list[int]) -> int:
+    """Checks for a combination of four consecutive numbers and returns their sum."""
     res = 0
     dices_unique = list(set(sorted(dice)))
     if len(dices_unique) >= 4:
@@ -68,6 +82,7 @@ def small_straight_check(dice: list[int]) -> int:
 
 
 def large_straight_check(dice: list[int]) -> int:
+    """Checks for a combination of five consecutive numbers and returns their sum."""
     temp = dice.copy()
     temp.sort()
     n = len(temp)
@@ -86,4 +101,5 @@ def large_straight_check(dice: list[int]) -> int:
 
 
 def chance_check(dices: list[int]) -> int:
+    """Returns the sum of all rolled dice without considering combinations."""
     return sum(dices)

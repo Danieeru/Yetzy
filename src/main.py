@@ -1,9 +1,15 @@
+"""
+Yezzi - a dice game where players roll dice and try to achieve various combinations.
+Each player gets three rolls per turn to achieve the best possible combination.
+The game features a scoring system with bonus points for completing the upper section (64+ points).
+"""
 import random
 import sys
-import combinations as comb
+from . import combinations as comb_mod
 
 
 def get_valid_number() -> int:
+    """Get and validate number of players (1-6) from user input."""
     while True:
         user_input = input("Number of players: ").strip()
         if not user_input:
@@ -19,6 +25,7 @@ def get_valid_number() -> int:
 
 
 def get_valid_array(dice: list[int]) -> list[int]:
+    """Get and validate dice to keep from user input, returns list of dice numbers or 'q' to quit."""
     count_res = {}
     for num in dice:
         if num in count_res:
@@ -63,6 +70,7 @@ def get_valid_array(dice: list[int]) -> list[int]:
 
 
 def create_object_dice(die_face: int) -> list[str]:
+    """Create ASCII representation of a die face (1-6)."""
     faces = [
         ["+ - - - - +", "|         |", "|    o    |", "|         |", "+ - - - - +"],
         ["+ - - - - +", "|  o      |", "|         |", "|      o  |", "+ - - - - +"],
@@ -75,6 +83,7 @@ def create_object_dice(die_face: int) -> list[str]:
 
 
 def print_five_dice(dice: list[int]) -> None:
+    """Print ASCII representation of five dice in a row."""
     faces = [create_object_dice(die) for die in dice]
     for i in range(len(faces)):
         for j in range(len(faces[0])):
@@ -83,6 +92,7 @@ def print_five_dice(dice: list[int]) -> None:
 
 
 def roll_five_dice() -> list[int]:
+    """Generate five random dice rolls (1-6)."""
     dice = []
     for _ in range(5):
         die = random.randint(1, 6)
@@ -90,6 +100,7 @@ def roll_five_dice() -> list[int]:
     return dice
 
 def reroll_few_dice(dice: list[int], reroll_dices: list[int]) -> None:
+    """Reroll specified dice while keeping others unchanged."""
     if reroll_dices == "q":
         return
     new_dice = []
@@ -103,6 +114,7 @@ def reroll_few_dice(dice: list[int], reroll_dices: list[int]) -> None:
 
 
 def one_turn(combinations: dict[str, list[str]], player: int) -> dict[str, int]:
+    """Execute one player's turn: roll dice, show combinations, allow rerolls."""
     print("Rolling five dice...")
     dice = roll_five_dice()
     print_five_dice(dice)
@@ -120,6 +132,7 @@ def one_turn(combinations: dict[str, list[str]], player: int) -> dict[str, int]:
 
 
 def add_players(count_players: int) -> list[str]:
+    """Get player names from user input and return list of player names."""
     players = []
     for i in range(count_players):
         while True:
@@ -133,6 +146,7 @@ def add_players(count_players: int) -> list[str]:
 
 
 def create_start_table(combinations: dict[str, list[str]], players: list[str]) -> None:
+    """Initialize game table with player names and empty scores."""
     count_players = len(players)
     for comb, player in combinations.items():
         for i in range(count_players):
@@ -145,6 +159,7 @@ def create_start_table(combinations: dict[str, list[str]], players: list[str]) -
 
 
 def draw_table(combinations: dict[str, list[str]], players: list[str]) -> None:
+    """Display current game state in a formatted table."""
     count_players = len(players)
     max_name = max(len(name) for name in players)
     sys.stdout.write("\033[F" * (count_players - 25))
@@ -157,38 +172,40 @@ def draw_table(combinations: dict[str, list[str]], players: list[str]) -> None:
 
 
 def check_all_combinations(dice: list[int]) -> dict[str, int]:
+    """Calculate scores for all possible combinations with given dice."""
     res = {
-        "Ones": comb.number_check(dice, 1),
-        "Twos": comb.number_check(dice, 2),
-        "Threes": comb.number_check(dice, 3),
-        "Fours": comb.number_check(dice, 4),
-        "Fives": comb.number_check(dice, 5),
-        "Sixes": comb.number_check(dice, 6),
-        "Pair": comb.number_of_a_kind_check(dice, 2),
-        "Two Pairs": comb.two_pairs_check(dice),
-        "Three of a Kind": comb.number_of_a_kind_check(dice, 3),
-        "Four of a Kind": comb.number_of_a_kind_check(dice, 4),
-        "Full House": comb.full_house_check(dice),
-        "Small Straight": comb.small_straight_check(dice),
-        "Large Straight": comb.large_straight_check(dice),
-        "Yezzi": comb.number_of_a_kind_check(dice, 5),
-        "Chance": comb.chance_check(dice)
+        "Ones": comb_mod.number_check(dice, 1),
+        "Twos": comb_mod.number_check(dice, 2),
+        "Threes": comb_mod.number_check(dice, 3),
+        "Fours": comb_mod.number_check(dice, 4),
+        "Fives": comb_mod.number_check(dice, 5),
+        "Sixes": comb_mod.number_check(dice, 6),
+        "Pair": comb_mod.number_of_a_kind_check(dice, 2),
+        "Two Pairs": comb_mod.two_pairs_check(dice),
+        "Three of a Kind": comb_mod.number_of_a_kind_check(dice, 3),
+        "Four of a Kind": comb_mod.number_of_a_kind_check(dice, 4),
+        "Full House": comb_mod.full_house_check(dice),
+        "Small Straight": comb_mod.small_straight_check(dice),
+        "Large Straight": comb_mod.large_straight_check(dice),
+        "Yezzi": comb_mod.number_of_a_kind_check(dice, 5),
+        "Chance": comb_mod.chance_check(dice)
     }
     res = dict(reversed(sorted(res.items(), key=lambda item: item[1])))
     return res
 
 def print_comb(res: dict[str, int], combinations: dict[str, list[str]], player: int) -> None:
+    """Print available combinations and their scores for current player."""
     for comb, r in res.items():
         if r != 0 and combinations[comb][player] == "":
             print(f"| {comb}: {r} ", end="")
         else:
             continue
     print("|", end="\n")
-    
 
 
-def write_res_in_table(combinations: dict[str, list[str]], res: dict[str, int], 
-                       player: int, block_nums: list[int], block_num_bool: list[bool]) -> None:
+def write_res_in_table(combinations: dict[str, list[str]], res: dict[str, int],
+                    player: int, block_nums: list[int], block_num_bool: list[bool]) -> None:
+    """Process player's choice of combination and update scores."""
     while True:
         com_input = input("Record: ").lower().strip().replace(" ", "")
         if com_input in ("1", "ones"):
@@ -313,6 +330,7 @@ def write_res_in_table(combinations: dict[str, list[str]], res: dict[str, int],
 
 
 def calc_cell(combinations: dict[str, list[str]]) -> int:
+    """Calculate total number of cells in the game table."""
     s = 0
     for comb, scores in combinations.items():
         if comb in ("64/35", "Total"):
@@ -322,6 +340,7 @@ def calc_cell(combinations: dict[str, list[str]]) -> int:
 
 
 def main() -> None:
+    """Main game loop: initialize game, handle turns until completion."""
     combinations = {
         "64/35": [],
         "Ones": [],
