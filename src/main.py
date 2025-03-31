@@ -3,9 +3,9 @@ Yezzi - a dice game where players roll dice and try to achieve various combinati
 Each player gets three rolls per turn to achieve the best possible combination.
 The game features a scoring system with bonus points for completing the upper section (64+ points).
 """
-import random
-import sys
-from . import combinations as comb_mod
+import combinations as comb_mod
+import dice as dice_mod
+import gameboard as board_mod
 
 
 def get_valid_number() -> int:
@@ -69,65 +69,23 @@ def get_valid_array(dice: list[int]) -> list[int]:
                 return val_nums
 
 
-def create_object_dice(die_face: int) -> list[str]:
-    """Create ASCII representation of a die face (1-6)."""
-    faces = [
-        ["+ - - - - +", "|         |", "|    o    |", "|         |", "+ - - - - +"],
-        ["+ - - - - +", "|  o      |", "|         |", "|      o  |", "+ - - - - +"],
-        ["+ - - - - +", "|  o      |", "|    o    |", "|      o  |", "+ - - - - +"],
-        ["+ - - - - +", "|  o   o  |", "|         |", "|  o   o  |", "+ - - - - +"],
-        ["+ - - - - +", "|  o   o  |", "|    o    |", "|  o   o  |", "+ - - - - +"],
-        ["+ - - - - +", "|  o   o  |", "|  o   o  |", "|  o   o  |", "+ - - - - +"],
-    ]
-    return faces[die_face - 1]
-
-
-def print_five_dice(dice: list[int]) -> None:
-    """Print ASCII representation of five dice in a row."""
-    faces = [create_object_dice(die) for die in dice]
-    for i in range(len(faces)):
-        for j in range(len(faces[0])):
-            print(faces[j][i], end=' ')
-        print()
-
-
-def roll_five_dice() -> list[int]:
-    """Generate five random dice rolls (1-6)."""
-    dice = []
-    for _ in range(5):
-        die = random.randint(1, 6)
-        dice.append(die)
-    return dice
-
-def reroll_few_dice(dice: list[int], reroll_dices: list[int]) -> None:
-    """Reroll specified dice while keeping others unchanged."""
-    if reroll_dices == "q":
-        return
-    new_dice = []
-    for num in dice:
-        if num in reroll_dices:
-            new_dice.append(reroll_dices.pop(reroll_dices.index(num)))
-        elif num not in reroll_dices:
-            new_dice.append(random.randint(1, 6))
-    for i, die in enumerate(new_dice):
-        dice[i] = die
-
-
 def one_turn(combinations: dict[str, list[str]], player: int) -> dict[str, int]:
     """Execute one player's turn: roll dice, show combinations, allow rerolls."""
     print("Rolling five dice...")
-    dice = roll_five_dice()
-    print_five_dice(dice)
+    dice = dice_mod.roll_five_dice()
+    dice_mod.print_five_dice(dice)
     res = check_all_combinations(dice)
-    print_comb(res, combinations, player)
+    board_mod.print_comb(res, combinations, player)
     for i in range(2):
         print(f"{i + 1}: Rerolling...")
         reroll = get_valid_array(dice)
-        reroll_few_dice(dice, reroll)
+        if reroll == "q":
+            break
+        dice_mod.reroll_few_dice(dice, reroll)
         print(f"Updated dice: {dice}")
-        print_five_dice(dice)
+        dice_mod.print_five_dice(dice)
         res = check_all_combinations(dice)
-        print_comb(res, combinations, player)
+        board_mod.print_comb(res, combinations, player)
     return res
 
 
@@ -143,32 +101,6 @@ def add_players(count_players: int) -> list[str]:
                 players.append(player_name)
                 break
     return players
-
-
-def create_start_table(combinations: dict[str, list[str]], players: list[str]) -> None:
-    """Initialize game table with player names and empty scores."""
-    count_players = len(players)
-    for comb, player in combinations.items():
-        for i in range(count_players):
-            if comb == "64/35":
-                player.append(players[i])
-            elif comb == "Total":
-                player.append(0)
-            else:
-                player.append("")
-
-
-def draw_table(combinations: dict[str, list[str]], players: list[str]) -> None:
-    """Display current game state in a formatted table."""
-    count_players = len(players)
-    max_name = max(len(name) for name in players)
-    sys.stdout.write("\033[F" * (count_players - 25))
-    for comb, player in combinations.items():
-        print("+" + "-" * 17 + ("+" + "-" * (max_name + 4)) * count_players + "+")
-        print(f"| {comb:^15} |", end="")
-        for i in range(count_players):
-            print(f" {player[i]:^{max_name + 2}} |",end="")
-        print()
 
 
 def check_all_combinations(dice: list[int]) -> dict[str, int]:
@@ -192,15 +124,6 @@ def check_all_combinations(dice: list[int]) -> dict[str, int]:
     }
     res = dict(reversed(sorted(res.items(), key=lambda item: item[1])))
     return res
-
-def print_comb(res: dict[str, int], combinations: dict[str, list[str]], player: int) -> None:
-    """Print available combinations and their scores for current player."""
-    for comb, r in res.items():
-        if r != 0 and combinations[comb][player] == "":
-            print(f"| {comb}: {r} ", end="")
-        else:
-            continue
-    print("|", end="\n")
 
 
 def write_res_in_table(combinations: dict[str, list[str]], res: dict[str, int],
@@ -329,16 +252,6 @@ def write_res_in_table(combinations: dict[str, list[str]], res: dict[str, int],
         print("BLOCK COMPLETED! +35")
 
 
-def calc_cell(combinations: dict[str, list[str]]) -> int:
-    """Calculate total number of cells in the game table."""
-    s = 0
-    for comb, scores in combinations.items():
-        if comb in ("64/35", "Total"):
-            continue
-        s += len(scores)
-    return s
-
-
 def main() -> None:
     """Main game loop: initialize game, handle turns until completion."""
     combinations = {
@@ -365,18 +278,18 @@ def main() -> None:
     players = add_players(count_players)
     block_nums = [0 for i in players]
     block_num_bool = [False for i in players]
-    create_start_table(combinations, players)
+    board_mod.create_start_table(combinations, players)
     print("Starting grid:")
-    draw_table(combinations, players)
-    cells = calc_cell(combinations)
+    board_mod.draw_table(combinations, players)
+    cells = board_mod.calc_cell(combinations)
     turn = 1
     while cells >= turn * count_players:
         print(f"Turn {turn}")
         for i, player in enumerate(players):
-            print(f"{player}:")
+            input(f"{player}: Press Enter to roll the dice... ")
             res = one_turn(combinations, i)
             write_res_in_table(combinations, res, i, block_nums, block_num_bool)
-            draw_table(combinations, players)
+            board_mod.draw_table(combinations, players)
         turn += 1
 
 
