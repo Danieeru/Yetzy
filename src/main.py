@@ -1,5 +1,5 @@
 """
-Yezzi - a dice game where players roll dice and try to achieve various combinations.
+Yatzy - a dice game where players roll dice and try to achieve various combinations.
 Each player gets three rolls per turn to achieve the best possible combination.
 The game features a scoring system with bonus points for completing the upper section (64+ points).
 """
@@ -119,7 +119,7 @@ def check_all_combinations(dice: list[int]) -> dict[str, int]:
         "Full House": comb_mod.full_house_check(dice),
         "Small Straight": comb_mod.small_straight_check(dice),
         "Large Straight": comb_mod.large_straight_check(dice),
-        "Yezzi": comb_mod.number_of_a_kind_check(dice, 5),
+        "Yatzy": comb_mod.number_of_a_kind_check(dice, 5),
         "Chance": comb_mod.chance_check(dice)
     }
     res = dict(reversed(sorted(res.items(), key=lambda item: item[1])))
@@ -228,10 +228,10 @@ def write_res_in_table(combinations: dict[str, list[str]], res: dict[str, int],
             else:
                 print("Error! Result already recorded.")
                 continue
-        elif com_input in ("yezzi", "y"):
-            if combinations["Yezzi"][player] == "":
-                combinations["Yezzi"][player] = res["Yezzi"]
-                combinations["Total"][player] += res["Yezzi"]
+        elif com_input in ("yatzy", "y"):
+            if combinations["Yatzy"][player] == "":
+                combinations["Yatzy"][player] = res["Yatzy"]
+                combinations["Total"][player] += res["Yatzy"]
             else:
                 print("Error! Result already recorded.")
                 continue
@@ -269,11 +269,11 @@ def main() -> None:
         "Full House": [],
         "Small Straight": [],
         "Large Straight": [],
-        "Yezzi": [],
+        "Yatzy": [],
         "Chance": [],
         "Total": []
     }
-    print("Welcome to Yezzi!")
+    print("Welcome to Yatzy!")
     count_players = get_valid_number()
     players = add_players(count_players)
     block_nums = [0 for i in players]
