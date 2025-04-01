@@ -1,4 +1,3 @@
-import random
 import itertools
 import json
 
@@ -6,12 +5,12 @@ import json
 class CompactArrayEncoder(json.JSONEncoder):
     def iterencode(self, o, _one_shot=False):
         if isinstance(o, list) and all(isinstance(i, (int, float)) for i in o):
-            return f"[{','.join(map(str, o))}]"    
+            return f"[{','.join(map(str, o))}]"
         elif isinstance(o, list):
             return "[\n" + ",\n".join(
-                self.iterencode(item).replace("\n", "\n  ") 
+                self.iterencode(item).replace("\n", "\n  ")
                 for item in o
-            ) + "\n]"       
+            ) + "\n]"
         elif isinstance(o, dict):
             return "{\n" + ",\n".join([
                 f'"{k}": {self.iterencode(v).replace("\n", "\n  ")}'
@@ -168,7 +167,7 @@ def three_of_a_kind_generate(dice):
                 write_to_dict(num_dict, s, arr)
         if not found:
             write_to_dict(num_dict, 0, arr)
-    return dict(sorted(num_dict.items()))           
+    return dict(sorted(num_dict.items()))
 def four_of_a_kind_generate(dice):
     num_dict = {}
     for arr in dice:
@@ -209,7 +208,7 @@ def full_house_generate(dice):
                 write_to_dict(num_dict, s, arr)
         if not found:
             write_to_dict(num_dict, 0, arr)
-    return dict(sorted(num_dict.items()))      
+    return dict(sorted(num_dict.items()))
 
 def small_straight_generate(dice):
     num_dict = {}
@@ -231,7 +230,7 @@ def small_straight_generate(dice):
                 write_to_dict(num_dict, s, arr)
         if not found:
             write_to_dict(num_dict, 0, arr)
-    return dict(sorted(num_dict.items()))  
+    return dict(sorted(num_dict.items()))
 
 
 def large_straight_generate(dice):
@@ -239,7 +238,7 @@ def large_straight_generate(dice):
     for arr in dice:
         temp_arr = arr.copy()
         temp_arr.sort()
-        found = False  
+        found = False
         n = len(temp_arr)
         for i in range(n - 4):
             subarray = temp_arr[i:i+5]
@@ -285,7 +284,7 @@ def chance_generate(dice):
     return dict(sorted(num_dict.items()))
 
 
-def game_data_jsonl(dice):
+def game_data_json(dice):
     try:
         game_data = {
         "one": one_generate(dice),
@@ -306,18 +305,16 @@ def game_data_jsonl(dice):
         }
         with open("game_data.json", "w") as f:
             json.dump(game_data, f, cls=CompactArrayEncoder, indent=2, ensure_ascii=False)
-
-
-                
     except Exception as e:
         print(f"Error occurred: {e}")
-    
+
 
 def testing_count(combination_dict):
     s = 0
     for i in combination_dict:
         print(f"Score: {i}, Count: {len(combination_dict[i])}")
-        s += len(combination_dict[i])
+        if i != 0:
+            s += len(combination_dict[i])
     print(f"s = {s}")
 
 
@@ -329,100 +326,56 @@ def testing_arrs(combination_dict):
 
 def main():
     dice = generate_dice()
-    # game_data_json(dice)
-    # game_data_jsonl(dice)
-    # one_dict = one_generate(dice)
-    # two_dict = two_generate(dice)
-    # three_dict = three_generate(dice)
-    # four_dict = four_generate(dice)
-    # five_dict = five_generate(dice)
-    # six_dict = six_generate(dice)
-    # one_pair_dict = one_pair_generate(dice)
-    # two_pair_dict = two_pair_generate(dice)
-    # three_of_a_kind_dict = three_of_a_kind_generate(dice)
-    # four_of_a_kind_dict = four_of_a_kind_generate(dice)
-    # full_house_dict = full_house_generate(dice)
-    # small_straight_dict = small_straight_generate(dice)
-    # large_straight_dict = large_straight_generate(dice)
-    # yezzi_dict = yezzi_generate(dice)
+    game_data_json(dice)
+    one_dict = one_generate(dice)
+    two_dict = two_generate(dice)
+    three_dict = three_generate(dice)
+    four_dict = four_generate(dice)
+    five_dict = five_generate(dice)
+    six_dict = six_generate(dice)
+    one_pair_dict = one_pair_generate(dice)
+    two_pair_dict = two_pair_generate(dice)
+    three_of_a_kind_dict = three_of_a_kind_generate(dice)
+    four_of_a_kind_dict = four_of_a_kind_generate(dice)
+    full_house_dict = full_house_generate(dice)
+    small_straight_dict = small_straight_generate(dice)
+    large_straight_dict = large_straight_generate(dice)
+    yezzi_dict = yezzi_generate(dice)
     chance_dict = chance_generate(dice)
 
 
 
-    # print("Test result")
-    # print('testing__count "one":')
-    # testing_count(one_dict)
-    # print('testing_count "two":')
-    # testing_count(two_dict)
-    # print('testing_count "three":')
-    # testing_count(three_dict)
-    # print('testing_count "four":')
-    # testing_count(four_dict)
-    # print('testing_count "five":')
-    # testing_count(five_dict)
-    # print('testing_count "six":')
-    # testing_count(six_dict)
-    # print('testing_count "one pair":')
-    # testing_count(one_pair_dict)
-    # print('testing_count "two pair":')
+    print("Test result")
+    print('testing__count "one":')
+    testing_count(one_dict)
+    print('testing_count "two":')
+    testing_count(two_dict)
+    print('testing_count "three":')
+    testing_count(three_dict)
+    print('testing_count "four":')
+    testing_count(four_dict)
+    print('testing_count "five":')
+    testing_count(five_dict)
+    print('testing_count "six":')
+    testing_count(six_dict)
+    print('testing_count "one pair":')
+    testing_count(one_pair_dict)
+    print('testing_count "two pair":')
+    testing_count(two_pair_dict)
+    print('testing_count "three of a kind":')
+    testing_count(three_of_a_kind_dict)
+    print('testing_count "four of a kind":')
+    testing_count(four_of_a_kind_dict)
+    print('testing_count "full house":')
+    testing_count(full_house_dict)
+    print('testing_count "small straight":')
+    testing_count(small_straight_dict)
+    print('testing_count "large straight":')
+    testing_count(large_straight_dict)
+    print('testing_count "yezzi":')
+    testing_count(yezzi_dict)
+    print('testing_count "chance":')
     testing_count(chance_dict)
-    # testing_arrs(two_pair_dict)
-    # print('testing_count "three of a kind":')
-    # testing_count(three_of_a_kind_dict)
-    # print('testing_count "four of a kind":')
-    # testing_count(four_of_a_kind_dict)
-    # print('testing_count "full house":')
-    # testing_count(full_house_dict)
-    # print('testing_count "small straight":')
-    # testing_count(small_straight_dict)
-    # print('testing_count "large straight":')
-    # testing_count(large_straight_dict)
-    # print('testing_count "yezzi":')
-    # testing_count(yezzi_dict)
-    # print('testing_count "chance":')
-    # testing_count(chance_dict)
-
-
-
-    # chance_dict = chance_generate(dice)
-    # for i in one_dict:
-    #     print(f"One: {i}, Count: {one_dict[i]}")
-    #     print("=========================")
-    # for i in two_dict:
-    #     print(f"Two: {i}, Count: {two_dict[i]}")
-    #     print("=========================")
-    # for i in three_dict:
-    #     print(f"Three: {i}, Count: {three_dict[i]}")
-    #     print("=========================")
-    # for i in four_dict:
-    #     print(f"Four: {i}, Count: {four_dict[i]}")
-    #     print("=========================")
-    # for i in five_dict:
-    #     print(f"Five: {i}, Count: {five_dict[i]}")
-    #     print("=========================")
-    # for i in six_dict:
-    #     print(f"Six: {i}, Count: {six_dict[i]}")
-    #     print("=========================")
-    # for i in one_pair_dict:
-    #     print(f"One: {i}, Count: {one_pair_dict[i]}")
-    #     print("=========================")
-    # for i in two_pair_dict:
-    #     print(f"Two: {i}, Count: {two_pair_dict[i]}")
-    #     print("=========================")
-    # for i in three_of_a_kind_dict:
-    #     print(f"Three of a kind: {i}, Count: {three_of_a_kind_dict[i]}")
-    #     print("=========================")
-    # for i in one_pair_dict:
-    #     print(f"{i}: {one_pair_dict[i]} ")
-    # print("=========================")
-    # for i in two_pair_dict:
-    #     print(f"{i}: {two_pair_dict[i]} ")
-    # for i in three_of_a_kind_dict:
-    #     print(f"{i}: {three_of_a_kind_dict[i]} ")
-    # print("=========================")
-
-
-
 
 
 if __name__ == "__main__":
