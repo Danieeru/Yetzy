@@ -2,8 +2,6 @@
 Module for managing the game board and table operations in Yezzi game.
 Contains functions for creating, displaying and updating the game table.
 """
-import sys
-
 
 def create_start_table(combinations: dict[str, list[str]], players: list[str]) -> None:
     """Initialize game table with player names and empty scores."""
@@ -22,13 +20,14 @@ def draw_table(combinations: dict[str, list[str]], players: list[str]) -> None:
     """Display current game state in a formatted table."""
     count_players = len(players)
     max_name = max(len(name) for name in players)
-    sys.stdout.write("\033[F" * (count_players - 25))
     for comb, player in combinations.items():
         print("+" + "-" * 17 + ("+" + "-" * (max_name + 4)) * count_players + "+")
         print(f"| {comb:^15} |", end="")
         for i in range(count_players):
             print(f" {player[i]:^{max_name + 2}} |",end="")
         print()
+        if comb == "Total":
+            (print("+" + "-" * 17 + ("+" + "-" * (max_name + 4)) * count_players + "+"))    
 
 
 def print_comb(res: dict[str, int], combinations: dict[str, list[str]], player: int) -> None:

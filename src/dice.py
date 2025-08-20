@@ -10,7 +10,6 @@ Includes:
 """
 import random
 
-
 def create_object_dice(die_face: int) -> list[str]:
     """Create ASCII representation of a die face (1-6)."""
     faces = [
