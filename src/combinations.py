@@ -41,7 +41,7 @@ def two_pairs_check(dices: list[int]) -> int:
         if count >= 2 and temp == -1:
             temp = num
         elif count >= 2 and temp != -1:
-            s = temp * 2 + num * 2
+            res = temp * 2 + num * 2
     return res
 
 
@@ -53,7 +53,7 @@ def full_house_check(dices: list[int]) -> int:
     if len(counts) == 2:
         for num, count in counts.items():
             if count in (2, 3):
-                s += num * count
+                res += num * count
     return res
 
 

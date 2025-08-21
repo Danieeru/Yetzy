@@ -6,6 +6,7 @@ The game features a scoring system with bonus points for completing the upper se
 import combinations as comb_mod
 import dice as dice_mod
 import gameboard as board_mod
+from dice import Dice
 
 def get_valid_number() -> int:
     """Get and validate number of players (1-6) from user input."""
@@ -64,18 +65,18 @@ def get_valid_array(dice: list[int]) -> list[int]:
 
 
 def one_turn(combinations: dict[str, list[str]], player: int) -> dict[str, int]:
-    for i in range(3):
+    dice = Dice()
+    for i in range(dice.count_roll):
         if i == 0:
-            print("Rolling five dice...")
-            dice = dice_mod.roll_five_dice()
+            dice.roll_five_dices()
         else:
-            reroll = get_valid_array(dice)
-            if reroll == "q":
+            reroll = dice.get_valid_dices()
+            if reroll == dice.escape:
                 break
             print(f"{i + 1}: Rerolling...")
-            dice_mod.reroll_few_dice(dice, reroll)
-        dice_mod.print_five_dice(dice)
-        res = check_all_combinations(dice)
+            dice.reroll_few_dice()
+        dice.print_five_dices()
+        res = check_all_combinations(dice.dices)
         board_mod.print_comb(res, combinations, player)
     return res
             
