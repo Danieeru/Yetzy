@@ -7,7 +7,6 @@ import combinations as comb_mod
 import dice as dice_mod
 import gameboard as board_mod
 
-
 def get_valid_number() -> int:
     """Get and validate number of players (1-6) from user input."""
     while True:
@@ -26,34 +25,29 @@ def get_valid_number() -> int:
 
 def get_valid_array(dice: list[int]) -> list[int]:
     """Get and validate dice to keep from user input, returns list of dice numbers or 'q' to quit."""
-    count_res = {}
-    for num in dice:
-        if num in count_res:
-            count_res[num] += 1
-        else:
-            count_res[num] = 1
+    count_res = comb_mod.counts_dices(dice)
     while True:
         user_input = input("Keep: ")
         if user_input == "q":
             return "q"
         if not user_input:
             return []
-        elements = list(user_input.replace(" ", ""))
+        if user_input.isdigit():
+            elements = list(user_input.replace(" ", ""))
+        else:
+            print("Error! Must be integers only")
+            continue
         if len(elements) > 5:
             print("Error! Cannot keep more than five dice")
             continue
         val_nums = []
         val_nums_count = {}
         for elem in elements:
-            try:
-                number = int(elem)
-                if 1 <= number <= 6:
-                    val_nums.append(number)
-                else:
-                    print("Error! Number must be between 1 and 6")
-                    break
-            except ValueError:
-                print("Error! Must be integers only")
+            number = int(elem)
+            if 1 <= number <= 6:
+                val_nums.append(number)
+            else:
+                print("Error! Number must be between 1 and 6")
                 break
         else:
             for num in val_nums:
@@ -70,24 +64,21 @@ def get_valid_array(dice: list[int]) -> list[int]:
 
 
 def one_turn(combinations: dict[str, list[str]], player: int) -> dict[str, int]:
-    """Execute one player's turn: roll dice, show combinations, allow rerolls."""
-    print("Rolling five dice...")
-    dice = dice_mod.roll_five_dice()
-    dice_mod.print_five_dice(dice)
-    res = check_all_combinations(dice)
-    board_mod.print_comb(res, combinations, player)
-    for i in range(2):
-        print(f"{i + 1}: Rerolling...")
-        reroll = get_valid_array(dice)
-        if reroll == "q":
-            break
-        dice_mod.reroll_few_dice(dice, reroll)
-        print(f"Updated dice: {dice}")
+    for i in range(3):
+        if i == 0:
+            print("Rolling five dice...")
+            dice = dice_mod.roll_five_dice()
+        else:
+            reroll = get_valid_array(dice)
+            if reroll == "q":
+                break
+            print(f"{i + 1}: Rerolling...")
+            dice_mod.reroll_few_dice(dice, reroll)
         dice_mod.print_five_dice(dice)
         res = check_all_combinations(dice)
         board_mod.print_comb(res, combinations, player)
     return res
-
+            
 
 def add_players(count_players: int) -> list[str]:
     """Get player names from user input and return list of player names."""
