@@ -4,7 +4,6 @@ Each player gets three rolls per turn to achieve the best possible combination.
 The game features a scoring system with bonus points for completing the upper section (64+ points).
 """
 import combinations as comb_mod
-import dice as dice_mod
 import gameboard as board_mod
 from dice import Dice
 
@@ -15,54 +14,15 @@ def get_valid_number() -> int:
         if not user_input:
             print("Error! Enter a non-empty value")
             continue
-        try:
-            number = int(user_input)
-            if 1 <= number <= 6:
-                return number
-            print("Error! Number of players must be between 1 and 6")
-        except ValueError:
-            print(f"Error! '{user_input}' is not an integer")
-
-
-def get_valid_array(dice: list[int]) -> list[int]:
-    """Get and validate dice to keep from user input, returns list of dice numbers or 'q' to quit."""
-    count_res = comb_mod.counts_dices(dice)
-    while True:
-        user_input = input("Keep: ")
-        if user_input == "q":
-            return "q"
-        if not user_input:
-            return []
-        if user_input.isdigit():
-            elements = list(user_input.replace(" ", ""))
-        else:
-            print("Error! Must be integers only")
+        if not user_input.isdigit():
+            print(f"Error! '{user_input}' is not an integer!")
             continue
-        if len(elements) > 5:
-            print("Error! Cannot keep more than five dice")
+        number = int(user_input)
+        if number not in range(1, 6):
+            print("Error! Number players must be between 1 and 6.")
             continue
-        val_nums = []
-        val_nums_count = {}
-        for elem in elements:
-            number = int(elem)
-            if 1 <= number <= 6:
-                val_nums.append(number)
-            else:
-                print("Error! Number must be between 1 and 6")
-                break
-        else:
-            for num in val_nums:
-                if num in val_nums_count:
-                    val_nums_count[num] += 1
-                else:
-                    val_nums_count[num] = 1
-            for num, count in val_nums_count.items():
-                if num not in count_res or count > count_res[num]:
-                    print("Error! No such dice!")
-                    break
-            else:
-                return val_nums
-
+        return number
+        
 
 def one_turn(combinations: dict[str, list[str]], player: int) -> dict[str, int]:
     dice = Dice()
@@ -87,11 +47,14 @@ def add_players(count_players: int) -> list[str]:
     for i in range(count_players):
         while True:
             player_name = input(f"Player {i + 1} name: ")
-            if not player_name:
-                print("Error! Name cannot be empty")
+            if player_name:
+                if player_name not in players:
+                    players.append(player_name)
+                    break
+                else:
+                    print("Error! Name already exists!")
             else:
-                players.append(player_name)
-                break
+                print("Error! Name cannot be empty")
     return players
 
 
