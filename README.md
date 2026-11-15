@@ -8,4 +8,4 @@
 python3 src/cli-app/main.py
 ```
 
-[Бланк и правила игры](src/cli-app/docs/grid.pdf)
+[Бланк и правила игры](docs/grid.pdf)
